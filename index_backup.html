@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="THE AMAZE Fashion 2026 - The ultimate immersive e-commerce showroom. Discover digital sculptures and advanced textile engineering.">
+    <title>THE AMAZE Fashion | 2026 Global Showroom</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;300;400;600;700;900&family=Inter:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --accent-cyan: #06b6d4;
+            --accent-teal: #14b8a6;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --bg-black: #050505;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #030303;
+            color: white;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* High-Brilliance Mesh Gradients */
+        .glow-layer {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 10% 10%, rgba(6, 182, 212, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 90% 90%, rgba(20, 184, 166, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 10%, rgba(6, 182, 212, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 0% 100%, rgba(20, 184, 166, 0.08) 0%, transparent 60%);
+            filter: blur(60px);
+        }
+
+        .volumetric-node {
+            position: absolute;
+            width: 80vw;
+            height: 80vw;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
+            filter: blur(120px);
+            opacity: 0.4;
+            animation: drift 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes drift {
+            from {
+                transform: translate(-10%, -10%) scale(1);
+            }
+
+            to {
+                transform: translate(10%, 10%) scale(1.1);
+            }
+        }
+
+        h1,
+        h2,
+        h3,
+        .font-heading {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .font-playfair {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Noise Texture Overlay */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            opacity: 0.02;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Custom Cursor */
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.15s ease-out, width 0.3s ease, height 0.3s ease, background 0.3s ease;
+            transform: translate(-50%, -50%);
+            left: -100px;
+            top: -100px;
+        }
+
+        .cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            left: -100px;
+            top: -100px;
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Animations */
+        @keyframes reveal-up {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-reveal-up {
+            animation: reveal-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+
+        @keyframes slow-pulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(1.05);
+            }
+        }
+
+        .animate-slow-pulse {
+            animation: slow-pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes scroll-down {
+            0% {
+                transform: translate(-50%, -10px);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, 20px);
+                opacity: 0;
+            }
+        }
+
+        .animate-scroll-down {
+            animation: scroll-down 2s infinite;
+        }
+
+        /* Section Labels */
+        .section-label {
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5em;
+            color: var(--accent-cyan);
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-left: 50px;
+        }
+
+        .section-label::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 40px;
+            height: 1px;
+            background: var(--accent-cyan);
+        }
+
+        /* Bento Grid */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: repeat(8, 100px);
+            gap: 24px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #222;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+        }
+
+        /* Image Reveal Mask */
+        .image-reveal-mask {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-reveal-mask::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: #050505;
+            transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+            transform: scaleY(0);
+            transform-origin: top;
+        }
+
+        .image-reveal-mask.revealed::after {
+            transform: scaleY(0);
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Menu Drawer */
+        #menuDrawer {
+            transform: translateX(-100%);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto;
+        }
+
+        #menuDrawer.open {
+            transform: translateX(0);
+        }
+
+        .menu-link {
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        .menu-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--accent-cyan);
+            transform: translateX(-101%);
+            transition: transform 0.4s ease;
+        }
+
+        .menu-link:hover::after {
+            transform: translateX(0);
+        }
+    
+        /* Promotional Bar Marquee */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .animate-marquee {
+            display: flex;
+            width: max-content;
+            animation: marquee 30s linear infinite;
+        }
+
+        .promo-bar {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+            height: 36px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.8);
+            z-index: 200;
+        }
+
+        .promo-item {
+            padding: 0 4rem;
+            white-space: nowrap;
+        }
+
+        .promo-highlight {
+            color: #06b6d4;
+            font-weight: 900;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        accent: {
+                            cyan: '#06b6d4',
+                            teal: '#14b8a6',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="selection:bg-cyan-500/30">
+
+    <!-- Promotional Announcement Bar -->
+    <div class="fixed top-0 w-full promo-bar">
+        <div class="animate-marquee">
+            <div class="promo-item">Free Global Delivery on orders above <span class="promo-highlight">Rs. 5,999</span></div>
+            <div class="promo-item">Exclusive 20% OFF â€” Use Code: <span class="promo-highlight">AMAZE20</span></div>
+            <div class="promo-item">Elite Protocol: <span class="promo-highlight">Limited Stock Available</span></div>
+            <!-- Duplicate for seamless loop -->
+            <div class="promo-item">Free Global Delivery on orders above <span class="promo-highlight">Rs. 5,999</span></div>
+            <div class="promo-item">Exclusive 20% OFF â€” Use Code: <span class="promo-highlight">AMAZE20</span></div>
+            <div class="promo-item">Elite Protocol: <span class="promo-highlight">Limited Stock Available</span></div>
+        </div>
+    </div>
+    <div class="noise-overlay"></div>
+    <div class="glow-layer">
+        <div class="volumetric-node top-0 left-0"></div>
+        <div class="volumetric-node bottom-0 right-0"
+            style="animation-delay: -5s; background: radial-gradient(circle, rgba(20, 184, 166, 0.06) 0%, transparent 70%);">
+        </div>
+    </div>
+    <div id="cursorFollower" class="cursor-follower"></div>
+    <div class="cursor-dot" id="cursor"></div>
+
+    <!-- Live Pulse (Social Proof) -->
+    <div id="livePulse"
+        class="fixed bottom-10 left-10 z-[100] transform translate-y-20 opacity-0 transition-all duration-700 pointer-events-none">
+        <div class="glass-panel px-6 py-4 rounded-full flex items-center space-x-4">
+            <div class="relative w-3 h-3">
+                <div class="absolute inset-0 bg-green-500 rounded-full animate-ping"></div>
+                <div class="relative w-full h-full bg-green-500 rounded-full"></div>
+            </div>
+            <p id="pulseMessage" class="text-[10px] font-black uppercase tracking-widest text-white/70"></p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-[36px] w-full z-[150] px-10 py-8 transition-all duration-500">
+        <div class="max-w-[1700px] mx-auto grid grid-cols-3 items-center">
+            <!-- Left: Menu Trigger -->
+            <div class="flex items-center justify-start">
+                <button id="menuBtn"
+                    class="group flex items-center space-x-4 opacity-70 hover:opacity-100 transition-all">
+                    <div class="space-y-1.5">
+                        <div class="w-6 h-[1px] bg-white group-hover:w-8 transition-all"></div>
+                        <div class="w-8 h-[1px] bg-white group-hover:w-6 transition-all"></div>
+                    </div>
+                    <span class="text-[10px] font-black tracking-[0.4em] uppercase hidden sm:block">Protocol Menu</span>
+                </button>
+            </div>
+
+            <!-- Center: Brand -->
+            <div class="flex items-center justify-center">
+                <a href="index.html" class="flex items-center space-x-4 group uppercase">
+                    <img src="ChatGPT Image Feb 15, 2026, 10_04_22 PM.png" alt="THE AMAZE Logo"
+                        class="h-12 w-auto rounded-lg">
+                    <span class="text-3xl font-black tracking-tighter">
+                        THE AMAZE<span class="text-[var(--accent-cyan)] group-hover:animate-pulse">.</span>
+                    </span>
+                </a>
+            </div>
+
+            <!-- Right: Actions -->
+            <div class="flex items-center justify-end space-x-10">
+                                <!-- Favorites Trigger -->
+                <button id="favBtn" class="flex items-center space-x-4 opacity-70 hover:opacity-100 transition-all group">
+                    <i class="fas fa-heart text-white group-hover:text-[var(--accent-cyan)] transition-colors"></i>
+                    <span id="favCount"
+                        class="w-4 h-4 flex items-center justify-center rounded-full bg-[var(--accent-cyan)] text-[8px] font-black text-black opacity-0 transition-opacity">0</span>
+                </button>
+
+                <button id="cartBtn" class="flex items-center space-x-4 opacity-70 hover:opacity-100 transition-all">
+                    <span class="text-[10px] font-black tracking-[0.4em] uppercase hidden sm:block">Private Bag</span>
+                    <span id="cartCount"
+                        class="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-[10px] font-black">0</span>
+                </button>
+                <div class="w-px h-6 bg-white/10 hidden md:block"></div>
+                <button
+                    class="text-xs font-black uppercase tracking-widest text-white/40 hover:text-white transition-colors hidden md:block">Join
+                    Elite</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Side Menu Drawer -->
+    <div id="menuDrawer" class="fixed inset-0 z-[160] pointer-events-none">
+        <div id="menuOverlay"
+            class="absolute inset-0 bg-black/95 backdrop-blur-3xl opacity-0 transition-opacity duration-500 pointer-events-none">
+        </div>
+        <div
+            class="absolute left-0 top-0 h-full w-full max-w-xl bg-[#050505] border-r border-white/5 p-16 flex flex-col pointer-events-auto">
+            <div class="flex justify-between items-center mb-24">
+                <span class="text-[10px] font-black tracking-[0.5em] uppercase text-white/20">Navigation Protocol</span>
+                <button id="closeMenu" class="text-white/20 hover:text-white transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <ul class="flex-1 space-y-12">
+                <li>
+                    <a href="index.html#home"
+                        class="menu-link text-6xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase">Vision.</a>
+                </li>
+                <li>
+                    <a href="about.html"
+                        class="menu-link text-6xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase">About.</a>
+                </li>
+                <li>
+                    <a href="archive.html"
+                        class="menu-link text-6xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase">Archive.</a>
+                </li>
+                <li>
+                    <a href="contact.html"
+                        class="menu-link text-6xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase">Contact.</a>
+                </li>
+            </ul>
+
+            <div class="mt-20 pt-12 border-t border-white/5">
+                <p class="text-[9px] font-black uppercase tracking-[0.4em] text-white/20">The Amaze Architecture v.2026
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen flex items-center overflow-hidden bg-transparent">
+        <!-- Background Video -->
+        <div class="absolute inset-0 z-0">
+            <video autoplay muted loop playsinline
+                class="absolute inset-0 w-full h-full object-cover grayscale opacity-60 contrast-110">
+                <source
+                    src="https://player.vimeo.com/external/494451559.sd.mp4?s=5a0921757835154ee42f9e42220970dd88293774&profile_id=164&oauth2_token_id=57447761"
+                    type="video/mp4">
+            </video>
+            <div class="absolute inset-0 bg-transparent opacity-70"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60 opacity-80"></div>
+        </div>
+
+        <div class="max-w-[1700px] mx-auto px-6 w-full relative z-10 grid lg:grid-cols-12 gap-10 items-center">
+            <div class="lg:col-span-7 pt-20">
+                <div class="mb-6 animate-reveal-up" style="animation-delay: 0.1s;">
+                    <span class="section-label">2026 Archive v.01</span>
+                </div>
+                <div class="mb-10 animate-reveal-up" style="animation-delay: 0.3s;">
+                    <h2 class="text-[10vw] lg:text-[8vw] font-black leading-[0.85] tracking-tighter text-white">
+                        DIGITAL<br>
+                        <span
+                            class="font-playfair italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-white via-[var(--accent-cyan)] to-[var(--accent-teal)]">Sculptures.</span>
+                    </h2>
+                </div>
+                <div class="mb-16 animate-reveal-up" style="animation-delay: 0.5s;">
+                    <p class="text-xl lg:text-2xl text-white/50 font-light max-w-2xl leading-relaxed">
+                        Redefining the relationship between <span class="text-white">advanced textiles</span> and human
+                        form through high-conversion aesthetic engineering.
+                    </p>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center gap-8 animate-reveal-up"
+                    style="animation-delay: 0.7s;">
+                    <a href="#products"
+                        class="group relative px-16 py-7 bg-white text-black font-black uppercase text-xs tracking-widest rounded-full overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+                        <span class="relative z-10">Purchase the future</span>
+                        <div
+                            class="absolute inset-0 bg-[var(--accent-cyan)] translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 relative mt-20 lg:mt-0 animate-reveal-up" style="animation-delay: 0.9s;">
+                <div
+                    class="relative group p-6 glass-panel rounded-[3.5rem] overflow-hidden bg-white/[0.02] border-white/10 hover:border-[var(--accent-cyan)]/30 transition-all duration-700 shadow-2xl shadow-black/50">
+                    <div class="grid grid-cols-12 gap-8 items-center">
+                        <!-- Left: Visual Asset -->
+                        <div class="col-span-12 md:col-span-5 relative">
+                            <div class="aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-black/40">
+                                <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=1000"
+                                    alt="Elite Vanguard Concept"
+                                    class="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110">
+                            </div>
+                            <!-- Floating Badge -->
+                            <div
+                                class="absolute -top-4 -right-4 w-16 h-16 bg-white text-black rounded-full flex items-center justify-center font-black text-xs shadow-2xl">
+                                NEW
+                            </div>
+                        </div>
+
+                        <!-- Right: Conversion Metadata -->
+                        <div class="col-span-12 md:col-span-7 py-4">
+                            <div class="flex items-center space-x-2 mb-6 text-[var(--accent-cyan)] text-xs">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt opacity-50"></i>
+                                <span class="ml-2 text-white/40 font-bold uppercase tracking-tighter">(Elite
+                                    Rated)</span>
+                            </div>
+
+                            <h3 class="text-3xl font-black text-white uppercase tracking-tighter mb-4">Vanguard Core
+                                v.01</h3>
+                            <p class="text-sm text-white/40 leading-relaxed mb-8 font-light">
+                                High-tensile technical weave with thermal reactive protocols. Engineered for the 2026
+                                climate variance.
+                            </p>
+
+                            <div class="flex items-end space-x-6 mb-10">
+                                <span class="text-5xl font-black text-white tracking-tighter">$450</span>
+                                <span class="text-sm text-white/20 line-through mb-1">$600</span>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <button onclick="AMAZE.addToCart(2)"
+                                    class="py-5 bg-white text-black font-black uppercase tracking-widest text-[9px] rounded-full hover:bg-[var(--accent-cyan)] transition-colors shadow-xl">
+                                    Add to Bag
+                                </button>
+                                <button
+                                    class="py-5 bg-transparent border border-white/10 text-white font-black uppercase tracking-widest text-[9px] rounded-full hover:bg-white/10 transition-colors">
+                                    Buy Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Decorative Background Glow -->
+                    <div
+                        class="absolute -bottom-20 -right-20 w-60 h-60 bg-[var(--accent-cyan)]/5 blur-[80px] rounded-full pointer-events-none">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- NEW: Vanguard Spotlight (Immersive Showreel) -->
+    <section id="spotlight" class="py-60 px-6 relative overflow-hidden bg-transparent">
+        <div class="max-w-[1700px] mx-auto">
+            <div class="text-center mb-40 scroll-reveal">
+                <span class="section-label mx-auto">Vanguard Series</span>
+                <h2 class="text-[6vw] font-black tracking-tighter text-white mb-6 uppercase">
+                    Protocol <span class="text-[var(--accent-cyan)] font-playfair italic">Spotlight.</span>
+                </h2>
+                <p class="text-white/40 font-light tracking-[0.4em] text-[10px] uppercase">Architecting the future of
+                    technical materiality</p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-12">
+                <!-- Card 01 -->
+                <div class="spotlight-card group relative glass-panel rounded-[4rem] p-6 overflow-hidden scroll-reveal"
+                    style="transition-delay: 0.1s">
+                    <div class="aspect-[3/4] rounded-[3rem] overflow-hidden relative bg-white/5 mb-10">
+                        <!-- Primary Image -->
+                        <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=1200"
+                            class="product-img absolute inset-0 w-full h-full object-cover transition-all duration-1000 group-hover:opacity-0">
+
+                        <!-- Hover Image (Model) -->
+                        <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=1200"
+                            class="product-img absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000">
+
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60">
+                        </div>
+
+                        <!-- Floating Purchase UI -->
+                        <div
+                            class="buy-trigger absolute bottom-8 left-8 right-8 opacity-0 translate-y-10 transition-all duration-700 pointer-events-none group-hover:pointer-events-auto">
+                            <button onclick="AMAZE.addToCart(2)"
+                                class="w-full py-6 bg-white text-black font-black uppercase tracking-widest text-[10px] rounded-full hover:bg-[var(--accent-cyan)] transition-colors shadow-2xl">
+                                Secure Deployment
+                            </button>
+                        </div>
+                    </div>
+                    <div class="px-4">
+                        <div class="flex justify-between items-end mb-4">
+                            <div>
+                                <h4
+                                    class="text-2xl font-black tracking-tighter text-white uppercase group-hover:text-[var(--accent-cyan)] transition-colors">
+                                    Tech-Shell v1</h4>
+                                <p class="text-[9px] font-bold text-white/30 uppercase tracking-widest">Atmospheric
+                                    Resistance</p>
+                            </div>
+                            <span class="text-3xl font-black price-protocol">$450</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 02 -->
+                <div class="spotlight-card group relative glass-panel rounded-[4rem] p-6 overflow-hidden scroll-reveal"
+                    style="transition-delay: 0.2s">
+                    <div class="aspect-[3/4] rounded-[3rem] overflow-hidden relative bg-white/5 mb-10">
+                        <!-- Primary Image -->
+                        <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=1200"
+                            class="product-img absolute inset-0 w-full h-full object-cover transition-all duration-1000 group-hover:opacity-0">
+
+                        <!-- Hover Image (Model) -->
+                        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1200"
+                            class="product-img absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000">
+
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60">
+                        </div>
+
+                        <div
+                            class="buy-trigger absolute bottom-8 left-8 right-8 opacity-0 translate-y-10 transition-all duration-700 pointer-events-none group-hover:pointer-events-auto">
+                            <button onclick="AMAZE.addToCart(3)"
+                                class="w-full py-6 bg-white text-black font-black uppercase tracking-widest text-[10px] rounded-full hover:bg-[var(--accent-cyan)] transition-colors shadow-2xl">
+                                Secure Deployment
+                            </button>
+                        </div>
+                    </div>
+                    <div class="px-4">
+                        <div class="flex justify-between items-end mb-4">
+                            <div>
+                                <h4
+                                    class="text-2xl font-black tracking-tighter text-white uppercase group-hover:text-[var(--accent-cyan)] transition-colors">
+                                    Arctica Wool</h4>
+                                <p class="text-[9px] font-bold text-white/30 uppercase tracking-widest">Thermal
+                                    Optimization</p>
+                            </div>
+                            <span class="text-3xl font-black price-protocol">$899</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 03 -->
+                <div class="spotlight-card group relative glass-panel rounded-[4rem] p-6 overflow-hidden scroll-reveal"
+                    style="transition-delay: 0.3s">
+                    <div class="aspect-[3/4] rounded-[3rem] overflow-hidden relative bg-white/5 mb-10">
+                        <!-- Primary Image -->
+                        <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=1200"
+                            class="product-img absolute inset-0 w-full h-full object-cover transition-all duration-1000 group-hover:opacity-0">
+
+                        <!-- Hover Image (Model) -->
+                        <img src="https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=1200"
+                            class="product-img absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-1000">
+
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60">
+                        </div>
+
+                        <div
+                            class="buy-trigger absolute bottom-8 left-8 right-8 opacity-0 translate-y-10 transition-all duration-700 pointer-events-none group-hover:pointer-events-auto">
+                            <button onclick="AMAZE.addToCart(7)"
+                                class="w-full py-6 bg-white text-black font-black uppercase tracking-widest text-[10px] rounded-full hover:bg-[var(--accent-cyan)] transition-colors shadow-2xl">
+                                Secure Deployment
+                            </button>
+                        </div>
+                    </div>
+                    <div class="px-4">
+                        <div class="flex justify-between items-end mb-4">
+                            <div>
+                                <h4
+                                    class="text-2xl font-black tracking-tighter text-white uppercase group-hover:text-[var(--accent-cyan)] transition-colors">
+                                    Bio-Hybrid X</h4>
+                                <p class="text-[9px] font-bold text-white/30 uppercase tracking-widest">Kinetic
+                                    Engineering</p>
+                            </div>
+                            <span class="text-3xl font-black price-protocol">$420</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section id="lookbook" class="relative h-[120vh] overflow-hidden flex items-center">
+        <!-- Main Video Background (Purified Full Color) -->
+        <div class="absolute inset-0 z-0">
+            <video autoplay muted loop playsinline class="w-full h-full object-cover scale-110">
+                <source src="istockphoto-537029626-640_adpp_is.mp4" type="video/mp4">
+            </video>
+            <!-- Minimalist Vignette for Smooth Transition -->
+            <div class="absolute inset-0 bg-gradient-to-b from-[#030303] via-transparent to-[#030303]"></div>
+        </div>
+    </section>
+
+    <!-- NEW: Technical Materiality (Engineering Showcase) -->
+    <section id="engineering" class="py-60 px-6 relative overflow-hidden">
+        <div class="max-w-[1700px] mx-auto grid lg:grid-cols-2 gap-40 items-center">
+            <div class="order-2 lg:order-1 relative">
+                <div class="grid grid-cols-2 gap-8 scroll-reveal">
+                    <div class="aspect-square glass-panel rounded-[2rem] p-2 animate-float">
+                        <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800"
+                            class="w-full h-full object-cover rounded-[1.5rem] opacity-90 transition-all duration-700 hover:scale-110">
+                    </div>
+                    <div class="aspect-square glass-panel rounded-[2rem] p-2 mt-20 animate-float"
+                        style="animation-delay: -3s">
+                        <img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=800"
+                            class="w-full h-full object-cover rounded-[1.5rem] opacity-90 transition-all duration-700 hover:scale-110">
+                    </div>
+                </div>
+                <!-- Backdrop Decoration -->
+                <div class="absolute -top-20 -left-20 w-80 h-80 bg-[var(--accent-cyan)]/10 blur-[100px] rounded-full">
+                </div>
+            </div>
+            <div class="order-1 lg:order-2 scroll-reveal" style="transition-delay: 0.2s">
+                <span class="section-label">Composition</span>
+                <h2 class="text-7xl font-black tracking-tighter text-white mb-12 uppercase leading-none">Advanced
+                    <br><span class="text-[var(--accent-cyan)]">Materiality.</span>
+                </h2>
+                <div class="space-y-12">
+                    <div class="flex items-start space-x-8 group">
+                        <span
+                            class="text-xs font-black text-white/20 group-hover:text-[var(--accent-cyan)] transition-colors">01.</span>
+                        <div>
+                            <h4 class="text-xl font-bold text-white mb-4 uppercase tracking-widest">Digital Knit
+                                Protocols</h4>
+                            <p class="text-white/40 font-light leading-relaxed">Precision-engineered fibers woven
+                                through algorithmic patterns for perfect thermal regulation and structural memory.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-8 group">
+                        <span
+                            class="text-xs font-black text-white/20 group-hover:text-[var(--accent-cyan)] transition-colors">02.</span>
+                        <div>
+                            <h4 class="text-xl font-bold text-white mb-4 uppercase tracking-widest">Liquid Metal
+                                Silhouettes</h4>
+                            <p class="text-white/40 font-light leading-relaxed">Metallic-infused textile finishes that
+                                catch and diffuse light, creating a shimmering, futuristic armor effect.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Direct Shop CTA -->
+                <div class="mt-20 flex items-center space-x-8 group cursor-pointer" onclick="location.href='#products'">
+                    <span
+                        class="text-[10px] font-black uppercase tracking-[0.5em] text-white group-hover:text-[var(--accent-cyan)] transition-colors">Start
+                        Deploiment Protocol</span>
+                    <div
+                        class="h-px w-20 bg-white/10 group-hover:w-40 group-hover:bg-[var(--accent-cyan)] transition-all duration-700">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bento Categories -->
+    <section id="categories" class="py-40 px-6">
+        <div class="max-w-[1600px] mx-auto">
+            <div class="mb-24 px-6">
+                <span class="section-label">Curated Tiers</span>
+                <h2 class="text-8xl font-black tracking-tighter text-white uppercase">The Pulse.</h2>
+            </div>
+
+            <div class="bento-grid h-[800px] px-6">
+                <!-- Main Block -->
+                <div class="col-span-8 row-span-4 relative group overflow-hidden rounded-[3rem] glass-panel p-2">
+                    <div class="relative w-full h-full overflow-hidden rounded-[2.5rem]">
+                        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1000"
+                            class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-1000">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80">
+                        </div>
+                        <div class="absolute bottom-12 left-12">
+                            <span class="block text-4xl font-black text-white mb-2 uppercase tracking-tighter">Vanguard
+                                Series</span>
+                            <span
+                                class="text-[10px] font-bold uppercase tracking-[0.5em] text-[var(--accent-cyan)]">Limited
+                                Protocol</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Side Block 1 -->
+                <div class="col-span-4 row-span-2 relative group overflow-hidden rounded-[3rem] glass-panel p-2">
+                    <div class="relative w-full h-full overflow-hidden rounded-[2.5rem]">
+                        <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1000"
+                            class="absolute inset-0 w-full h-full object-cover transition-all duration-1000">
+                        <div class="absolute inset-0 bg-black/20"></div>
+                        <div class="absolute bottom-10 left-10">
+                            <span class="text-xl font-black text-white uppercase tracking-widest">Essentials</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Side Block 2 -->
+                <div class="col-span-4 row-span-2 relative group overflow-hidden rounded-[3rem] glass-panel p-2">
+                    <div class="relative w-full h-full overflow-hidden rounded-[2.5rem]">
+                        <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=1000"
+                            class="absolute inset-0 w-full h-full object-cover transition-all duration-1000">
+                        <div class="absolute inset-0 bg-black/20"></div>
+                        <div class="absolute bottom-10 left-10">
+                            <span class="text-xl font-black text-white uppercase tracking-widest">Accessories</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: MUSE ARCHIVE (Global Influence) -->
+    <section id="muse" class="py-60 px-6 bg-[rgba(6,182,212,0.01)]">
+        <div class="max-w-[1700px] mx-auto">
+            <div class="text-center mb-40 scroll-reveal">
+                <span class="section-label mx-auto">Social Proof</span>
+                <h2 class="text-7xl font-black tracking-tighter text-white uppercase mb-8">The Muse <br><span
+                        class="text-[var(--accent-cyan)]">Archive.</span></h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div class="scroll-reveal group" style="transition-delay: 0.1s">
+                    <div class="aspect-[3/4] rounded-[2.5rem] overflow-hidden mb-8 relative">
+                        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-all duration-1000">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                        <div class="absolute bottom-8 left-8">
+                            <span class="text-xs font-black uppercase tracking-widest text-[var(--accent-cyan)]">Berlin
+                                / Digital Artist</span>
+                        </div>
+                    </div>
+                    <p class="text-white/40 italic font-light leading-relaxed">"THE AMAZE isn't just clothing; it's a
+                        digital extension of my creative identity. The fluidity is unmatched."</p>
+                </div>
+                <div class="scroll-reveal group" style="transition-delay: 0.3s">
+                    <div class="aspect-[3/4] rounded-[2.5rem] overflow-hidden mb-8 relative">
+                        <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-all duration-1000">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                        <div class="absolute bottom-8 left-8">
+                            <span class="text-xs font-black uppercase tracking-widest text-[var(--accent-cyan)]">Tokyo /
+                                Architect</span>
+                        </div>
+                    </div>
+                    <p class="text-white/40 italic font-light leading-relaxed">"The engineering behind these textiles
+                        mirrors the precision of modern structural design."</p>
+                </div>
+                <div class="scroll-reveal group" style="transition-delay: 0.5s">
+                    <div class="aspect-[3/4] rounded-[2.5rem] overflow-hidden mb-8 relative">
+                        <img src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?q=80&w=800"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-all duration-1000">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                        <div class="absolute bottom-8 left-8">
+                            <span class="text-xs font-black uppercase tracking-widest text-[var(--accent-cyan)]">Paris /
+                                Curator</span>
+                        </div>
+                    </div>
+                    <p class="text-white/40 italic font-light leading-relaxed">"A masterclass in high-conversion
+                        aesthetic. They've truly captured the pulse of 2026."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Archive -->
+    <section id="products" class="py-40 px-6">
+        <div class="max-w-[1700px] mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-32 border-b border-white/5 pb-16">
+                <div>
+                    <span class="section-label">Inventory</span>
+                    <h2 class="text-7xl font-black tracking-tighter text-white uppercase">Ready For <br>Deploiment.</h2>
+                </div>
+                <div class="flex space-x-12 mt-10 md:mt-0">
+                    <a href="archive.html"
+                        class="text-[10px] font-black uppercase tracking-[0.5em] text-[var(--accent-cyan)] border-b border-[var(--accent-cyan)] pb-2">Full
+                        Archive Access</a>
+                </div>
+            </div>
+
+            <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+                <!-- Rendered by script.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: Global Trust Protocol (Trust & Authority) -->
+    <section id="trust" class="py-40 px-6 border-t border-b border-white/5 bg-transparent relative overflow-hidden">
+        <div class="max-w-[1700px] mx-auto">
+            <div class="text-center mb-24 scroll-reveal">
+                <span class="section-label mx-auto">Reliability Protocol</span>
+                <h2 class="text-6xl md:text-8xl font-black tracking-tighter text-white uppercase">Trusted <br><span
+                        class="text-[var(--accent-cyan)] font-playfair italic">Worldwide.</span></h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Stat 1: Customers -->
+                <div
+                    class="glass-panel p-10 rounded-[2.5rem] text-center group hover:border-[var(--accent-cyan)]/30 transition-all duration-700 scroll-reveal">
+                    <div
+                        class="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:bg-[var(--accent-cyan)] transition-colors">
+                        <i class="fas fa-users text-2xl text-white group-hover:text-black transition-colors"></i>
+                    </div>
+                    <h4 class="text-4xl font-black text-white mb-2 tracking-tighter">10,000+</h4>
+                    <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-white/30">Happy Customers</p>
+                </div>
+
+                <!-- Stat 2: Rating -->
+                <div class="glass-panel p-10 rounded-[2.5rem] text-center group hover:border-[var(--accent-cyan)]/30 transition-all duration-700 scroll-reveal"
+                    style="transition-delay: 0.1s">
+                    <div
+                        class="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:bg-[var(--accent-cyan)] transition-colors">
+                        <i class="fas fa-star text-2xl text-white group-hover:text-black transition-colors"></i>
+                    </div>
+                    <h4 class="text-4xl font-black text-white mb-2 tracking-tighter">4.9 ★</h4>
+                    <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-white/30">Average Rating</p>
+                </div>
+
+                <!-- Stat 3: Returns -->
+                <div class="glass-panel p-10 rounded-[2.5rem] text-center group hover:border-[var(--accent-cyan)]/30 transition-all duration-700 scroll-reveal"
+                    style="transition-delay: 0.2s">
+                    <div
+                        class="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:bg-[var(--accent-cyan)] transition-colors">
+                        <i class="fas fa-undo text-2xl text-white group-hover:text-black transition-colors"></i>
+                    </div>
+                    <h4 class="text-4xl font-black text-white mb-2 tracking-tighter">30-Day</h4>
+                    <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-white/30">Easy Returns</p>
+                </div>
+
+                <!-- Stat 4: Shipping -->
+                <div class="glass-panel p-10 rounded-[2.5rem] text-center group hover:border-[var(--accent-cyan)]/30 transition-all duration-700 scroll-reveal"
+                    style="transition-delay: 0.3s">
+                    <div
+                        class="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:bg-[var(--accent-cyan)] transition-colors">
+                        <i class="fas fa-globe text-2xl text-white group-hover:text-black transition-colors"></i>
+                    </div>
+                    <h4 class="text-4xl font-black text-white mb-2 tracking-tighter">FREE</h4>
+                    <p class="text-[10px] font-bold uppercase tracking-[0.4em] text-white/30">Worldwide Shipping</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: The Elite Protocol (Newsletter) -->
+    <section id="join"
+        class="py-60 px-6 relative overflow-hidden bg-gradient-to-b from-transparent to-[rgba(6,182,212,0.03)]">
+        <div class="max-w-[1400px] mx-auto text-center scroll-reveal">
+            <span class="section-label mx-auto">Access Protocol</span>
+            <h2 class="text-7xl font-black tracking-tighter text-white mb-10 leading-none lowercase">Join the <br><span
+                    class="text-[var(--accent-cyan)]">Elite.</span></h2>
+            <p class="text-xl text-white/40 font-light max-w-2xl mx-auto mb-16 uppercase tracking-widest">
+                Subscribe to receive early access to seasonal deployments and limited technical artifacts.
+            </p>
+
+            <form class="max-w-xl mx-auto relative group">
+                <div class="glass-panel rounded-full p-2 flex items-center">
+                    <input type="email" placeholder="ENTER DIGITAL ADDRESS"
+                        class="bg-transparent border-none outline-none flex-1 px-8 text-xs font-bold tracking-widest text-white placeholder:text-white/20">
+                    <button type="submit"
+                        class="px-12 py-5 bg-white text-black font-black uppercase text-xs tracking-widest rounded-full hover:bg-[var(--accent-cyan)] transition-colors duration-500">
+                        Initialize
+                    </button>
+                </div>
+            </form>
+            <p class="mt-8 text-[9px] font-bold text-white/10 uppercase tracking-widest">Data Secured Through THE AMAZE
+                Security Layers.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative z-10 py-32 px-10 border-t border-white/10 bg-transparent">
+        <div class="max-w-[1700px] mx-auto grid lg:grid-cols-4 gap-20">
+            <div class="lg:col-span-1">
+                <a href="#" class="flex items-center space-x-4 mb-10 group uppercase">
+                    <img src="ChatGPT Image Feb 15, 2026, 10_04_22 PM.png" alt="THE AMAZE Logo"
+                        class="h-14 w-auto rounded-xl">
+                    <span class="text-4xl font-black tracking-tighter">
+                        THE AMAZE<span class="text-[var(--accent-cyan)]">.</span>
+                    </span>
+                </a>
+                <p class="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 leading-loose">
+                    Architecting high-conversion <br>fashion identities for <br>the year 2026.
+                </p>
+            </div>
+            <div>
+                <span
+                    class="text-[10px] font-black tracking-[0.5em] uppercase text-white/20 mb-10 block">Navigation</span>
+                <ul class="space-y-6 text-[10px] font-bold uppercase tracking-widest">
+                    <li><a href="index.html#home" class="hover:text-[var(--accent-cyan)] transition-colors">Vision</a>
+                    </li>
+                    <li><a href="about.html" class="hover:text-[var(--accent-cyan)] transition-colors">About</a>
+                    </li>
+                    <li><a href="archive.html" class="hover:text-[var(--accent-cyan)] transition-colors">Archive</a>
+                    </li>
+                    <li><a href="index.html#categories"
+                            class="hover:text-[var(--accent-cyan)] transition-colors">Curation</a></li>
+                </ul>
+            </div>
+            <div>
+                <span class="text-[10px] font-black tracking-[0.5em] uppercase text-white/20 mb-10 block">Digital
+                    Presence</span>
+                <ul class="space-y-6 text-[10px] font-bold uppercase tracking-widest">
+                    <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors italic">Instagram</a></li>
+                    <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors italic">X / Digital</a>
+                    </li>
+                    <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors italic">LinkedIn</a></li>
+                </ul>
+            </div>
+            <div>
+                <span class="text-[10px] font-black tracking-[0.5em] uppercase text-white/20 mb-10 block">Intellectual
+                    Protocol</span>
+                <ul class="space-y-6 text-[10px] font-bold uppercase tracking-widest">
+                    <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors">Privacy</a></li>
+                    <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors">Terms</a></li>
+                    <li><a href="#" class="hover:text(--accent-cyan)] transition-colors">Cookies</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div
+            class="max-w-[1600px] mx-auto mt-32 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10">
+            <span class="text-[10px] font-black tracking-widest text-white/20 uppercase">&copy; 2026 THE AMAZE FASHION
+                PROTOCOL. ALL RIGHTS SECURED.</span>
+        </div>
+    </footer>
+
+    <!-- Cart Sidebar -->
+        <!-- Favorites Sidebar -->
+    <div id="favModal" class="fixed inset-0 z-[200] hidden">
+        <div id="favOverlay" class="absolute inset-0 bg-black/95 backdrop-blur-3xl transition-opacity duration-700">
+        </div>
+        <div id="favPanel"
+            class="absolute right-0 top-0 h-full w-full max-w-2xl bg-black border-l border-white/5 translate-x-full transition-transform duration-700">
+            <div class="flex flex-col h-full p-16">
+                <div class="flex justify-between items-center mb-16">
+                    <h3 class="text-4xl font-black tracking-tighter text-white uppercase">Private Collection<span
+                            class="text-[var(--accent-cyan)]">.</span></h3>
+                    <button id="closeFav" class="text-white/20 hover:text-white transition-colors">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                <!-- Favorites Items Container -->
+                <div id="favItems" class="flex-1 overflow-y-auto pr-6 custom-scrollbar"></div>
+                
+                <div class="pt-12 border-t border-white/10">
+                    <p class="text-[9px] font-bold text-white/20 uppercase tracking-widest text-center">
+                        These items are reserved in your local protocol.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="cartModal" class="fixed inset-0 z-[200] hidden">
+        <div id="cartOverlay" class="absolute inset-0 bg-black/95 backdrop-blur-3xl transition-opacity duration-700">
+        </div>
+        <div id="cartPanel"
+            class="absolute right-0 top-0 h-full w-full max-w-2xl bg-black border-l border-white/5 translate-x-full transition-transform duration-700">
+            <div class="flex flex-col h-full p-16">
+                <div class="flex justify-between items-center mb-16">
+                    <h3 class="text-5xl font-black tracking-tighter text-white lowercase">YOUR BAG<span
+                            class="text-[var(--accent-cyan)]">.</span></h3>
+                    <button id="closeCart" class="text-white/20 hover:text-white transition-colors">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                <div id="cartItems" class="flex-1 overflow-y-auto pr-6 custom-scrollbar"></div>
+                <div class="pt-16 border-t border-white/10">
+                    <div class="flex justify-between items-end mb-12">
+                        <span class="text-[10px] font-black uppercase tracking-[0.5em] text-white/30">Total Value</span>
+                        <span id="cartTotal" class="text-6xl font-black text-white">$0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

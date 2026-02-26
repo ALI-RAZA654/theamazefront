@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="THE AMAZE Brand Legacy - Our philosophy, engineering principles, and the vision for 2026 fashion.">
+    <title>Brand Legacy | THE AMAZE</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'playfair': ['"Playfair Display"', 'Georgia', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;300;400;600;700;900&family=Inter:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --accent-cyan: #06b6d4;
+            --accent-teal: #14b8a6;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --bg-black: #050505;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #030303;
+            color: white;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* High-Brilliance Mesh Gradients */
+        .glow-layer {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 10% 10%, rgba(6, 182, 212, 0.25) 0%, transparent 50%),
+                radial-gradient(circle at 90% 90%, rgba(20, 184, 166, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 50% 10%, rgba(6, 182, 212, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 0% 100%, rgba(20, 184, 166, 0.2) 0%, transparent 60%);
+            filter: blur(60px);
+        }
+
+        .volumetric-node {
+            position: absolute;
+            width: 80vw;
+            height: 80vw;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
+            filter: blur(120px);
+            opacity: 0.6;
+            animation: drift 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes drift {
+            from {
+                transform: translate(-10%, -10%) scale(1);
+            }
+
+            to {
+                transform: translate(10%, 10%) scale(1.1);
+            }
+        }
+
+        h1,
+        h2,
+        h3,
+        .font-heading {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .font-playfair {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            opacity: 0.02;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.15s ease-out, width 0.3s ease, height 0.3s ease, background 0.3s ease;
+            transform: translate(-50%, -50%);
+            left: -100px;
+            top: -100px;
+        }
+
+        .cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            left: -100px;
+            top: -100px;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .section-label {
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5em;
+            color: var(--accent-cyan);
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-left: 50px;
+        }
+
+        .section-label::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 40px;
+            height: 1px;
+            background: var(--accent-cyan);
+        }
+
+        @keyframes reveal-up {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-reveal-up {
+            animation: reveal-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+
+        /* Menu Drawer */
+        #menuDrawer {
+            transform: translateX(-100%);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto;
+        }
+
+        #menuDrawer.open {
+            transform: translateX(0);
+        }
+
+        .menu-link {
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        .menu-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--accent-cyan);
+            transform: translateX(-101%);
+            transition: transform 0.4s ease;
+        }
+
+        .menu-link:hover::after {
+            transform: translateX(0);
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #222;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+        }
+
+        /* Promotional Bar Marquee */
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .animate-marquee {
+            display: flex;
+            width: max-content;
+            animation: marquee 30s linear infinite;
+        }
+
+        .promo-bar {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+            height: 36px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.8);
+            z-index: 200;
+        }
+
+        .promo-item {
+            padding: 0 4rem;
+            white-space: nowrap;
+        }
+
+        .promo-highlight {
+            color: #06b6d4;
+            font-weight: 900;
+        }
+    </style>
+</head>
+
+<body class="selection:bg-cyan-500/30 font-light">
+
+    <!-- Promotional Announcement Bar -->
+    <div class="fixed top-0 w-full promo-bar">
+        <div class="animate-marquee">
+            <div class="promo-item">Free Global Delivery on orders above <span class="promo-highlight">Rs. 5,999</span>
+            </div>
+            <div class="promo-item">Exclusive 20% OFF â€” Use Code: <span class="promo-highlight">AMAZE20</span></div>
+            <div class="promo-item">Elite Protocol: <span class="promo-highlight">Limited Stock Available</span></div>
+            <!-- Duplicate for seamless loop -->
+            <div class="promo-item">Free Global Delivery on orders above <span class="promo-highlight">Rs. 5,999</span>
+            </div>
+            <div class="promo-item">Exclusive 20% OFF â€” Use Code: <span class="promo-highlight">AMAZE20</span></div>
+            <div class="promo-item">Elite Protocol: <span class="promo-highlight">Limited Stock Available</span></div>
+        </div>
+    </div>
+    <div class="noise-overlay"></div>
+    <div class="glow-layer">
+        <div class="volumetric-node top-0 left-0"></div>
+        <div class="volumetric-node bottom-0 right-0"
+            style="background: radial-gradient(circle, rgba(20, 184, 166, 0.2) 0%, transparent 70%);"></div>
+    </div>
+    <div id="cursorFollower" class="cursor-follower"></div>
+    <div class="cursor-dot" id="cursor"></div>
+
+    <!-- Live Pulse -->
+    <div id="livePulse"
+        class="fixed bottom-10 left-10 z-[100] transform translate-y-20 opacity-0 transition-all duration-700 pointer-events-none">
+        <div class="glass-panel px-6 py-4 rounded-full flex items-center space-x-4">
+            <div class="relative w-3 h-3">
+                <div class="absolute inset-0 bg-green-500 rounded-full animate-ping"></div>
+                <div class="relative w-full h-full bg-green-500 rounded-full"></div>
+            </div>
+            <p id="pulseMessage" class="text-[10px] font-black uppercase tracking-widest text-white/70"></p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-[36px] w-full z-[150] px-4 md:px-10 py-6 md:py-8 transition-all duration-500">
+        <div class="max-w-[1700px] mx-auto flex justify-between items-center">
+            <div class="flex items-center">
+                <button id="menuBtn"
+                    class="group flex items-center space-x-2 md:space-x-4 opacity-70 hover:opacity-100 transition-all">
+                    <div class="space-y-1.5">
+                        <div class="w-5 md:w-6 h-[1px] bg-white group-hover:w-8 transition-all"></div>
+                        <div class="w-7 md:w-8 h-[1px] bg-white group-hover:w-6 transition-all"></div>
+                    </div>
+                    <span
+                        class="text-[9px] md:text-[10px] font-black tracking-[0.4em] uppercase hidden sm:block">Protocol
+                        Menu</span>
+                </button>
+            </div>
+            <div class="flex items-center">
+                <a href="index.html" class="flex items-center space-x-2 md:space-x-4 group uppercase">
+                    <img src="ChatGPT Image Feb 15, 2026, 10_04_22 PM.png" alt="THE AMAZE Logo"
+                        class="h-8 md:h-12 w-auto rounded-lg">
+                    <span class="text-xl md:text-3xl font-black tracking-tighter">
+                        THE AMAZE<span class="text-[var(--accent-cyan)] group-hover:animate-pulse">.</span>
+                    </span>
+                </a>
+            </div>
+            <div class="flex items-center gap-3 md:gap-6">
+                <!-- Favorites Trigger -->
+                <button id="favBtn" class="flex items-center gap-2 opacity-70 hover:opacity-100 transition-all group">
+                    <i
+                        class="fas fa-heart text-white group-hover:text-[var(--accent-cyan)] transition-colors text-sm md:text-base"></i>
+                    <span id="favCount"
+                        class="w-3 h-3 md:w-4 md:h-4 flex items-center justify-center rounded-full bg-[var(--accent-cyan)] text-[7px] md:text-[8px] font-black text-black opacity-0 transition-opacity">0</span>
+                </button>
+
+                <button id="cartBtn" class="flex items-center gap-2 opacity-70 hover:opacity-100 transition-all group"
+                    title="Private Bag">
+                    <i
+                        class="fas fa-bag-shopping text-white group-hover:text-[var(--accent-cyan)] transition-colors text-base md:text-lg"></i>
+                    <span id="cartCount"
+                        class="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-[9px] md:text-[10px] font-black">0</span>
+                </button>
+                <a href="index.html#join"
+                    class="flex items-center opacity-70 hover:opacity-100 transition-all hidden md:flex"
+                    title="Join Elite">
+                    <i class="far fa-user text-white/80 hover:text-[var(--accent-cyan)] transition-colors text-lg"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Side Menu Drawer -->
+    <div id="menuDrawer" class="fixed inset-0 z-[160] pointer-events-none">
+        <div id="menuOverlay"
+            class="absolute inset-0 bg-black/95 backdrop-blur-3xl opacity-0 transition-opacity duration-500 pointer-events-none">
+        </div>
+        <div
+            class="absolute left-0 top-0 h-full w-full max-w-xl bg-[#050505] border-r border-white/5 p-16 flex flex-col pointer-events-auto">
+            <div class="flex justify-between items-center mb-24">
+                <span class="text-[10px] font-black tracking-[0.5em] uppercase text-white/20">Navigation Protocol</span>
+                <button id="closeMenu" class="text-white/20 hover:text-white transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <ul class="flex-1 space-y-8 md:space-y-12">
+                <li><a href="index.html#home"
+                        class="menu-link text-4xl md:text-6xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase">Vision.</a>
+                </li>
+                <li><a href="about.html"
+                        class="menu-link text-4xl md:text-6xl font-black tracking-tighter text-[var(--accent-cyan)] uppercase">About.</a>
+                </li>
+                <li><a href="archive.html"
+                        class="menu-link text-4xl md:text-6xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase">Archive.</a>
+                </li>
+                <li><a href="contact.html"
+                        class="menu-link text-4xl md:text-6xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase">Contact.</a>
+                </li>
+            </ul>
+            <div class="mt-20 pt-12 border-t border-white/5">
+                <p class="text-[9px] font-black uppercase tracking-[0.4em] text-white/20">The Amaze Architecture v.2026
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Content -->
+    <main class="pt-60 pb-40 px-6">
+        <div class="max-w-[1400px] mx-auto">
+            <div class="grid lg:grid-cols-2 gap-16 md:gap-32 items-center mb-40 md:mb-60">
+                <div class="animate-reveal-up text-center md:text-left">
+                    <span class="section-label md:mx-0 mx-auto">The Story</span>
+                    <h2 id="renderStoryTitle"
+                        class="text-6xl md:text-8xl font-black tracking-tighter text-white mb-10 leading-[0.85]">Beyond
+                        the
+                        <br><span class="text-[var(--accent-cyan)] font-playfair italic">Interface.</span>
+                    </h2>
+                    <p id="renderStoryText1"
+                        class="text-lg md:text-xl text-white/40 font-light leading-relaxed mb-8 md:mb-12 max-w-xl mx-auto md:mx-0">
+                        We don't just sell clothes; we architect identities. Every thread in our 2026 collection is
+                        infused with the spirit of the avant-garde. We believe in high-impact visuals that translate
+                        directly into emotional connection.
+                    </p>
+                    <p id="renderStoryText2"
+                        class="text-white/40 font-light leading-relaxed mb-8 md:mb-12 max-w-xl mx-auto md:mx-0">
+                        THE AMAZE was born at the intersection of technical precision and artistic rebellion. Our
+                        mission is to provide the elite with garments that act as a digital extension of their physical
+                        presence.
+                    </p>
+                </div>
+                <div class="relative animate-reveal-up" style="animation-delay: 0.2s">
+                    <div
+                        class="aspect-[4/5] glass-panel rounded-[3rem] p-4 relative overflow-hidden bg-gradient-to-br from-white/5 to-transparent">
+                        <div class="w-full h-full rounded-[2rem] overflow-hidden relative z-10">
+                            <img id="renderStoryImage"
+                                src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=1200"
+                                class="w-full h-full object-cover opacity-90 hover:scale-105 transition-all duration-1000">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-20">
+                <div class="animate-reveal-up" style="animation-delay: 0.3s">
+                    <h4 class="text-[10px] font-black uppercase tracking-[0.5em] text-[var(--accent-cyan)] mb-6">
+                        Philosophy</h4>
+                    <p id="renderPhilosophyText" class="text-white/30 text-sm leading-relaxed">Identity is not static.
+                        It is a series of digital
+                        and physical sculptures. Our design language mirrors this fluidity.</p>
+                </div>
+                <div class="animate-reveal-up" style="animation-delay: 0.4s">
+                    <h4 class="text-[10px] font-black uppercase tracking-[0.5em] text-[var(--accent-cyan)] mb-6">
+                        Engineering</h4>
+                    <p id="renderEngineeringText" class="text-white/30 text-sm leading-relaxed">Textiles are treated as
+                        hardware. Every seam is a
+                        protocol. Every fabric is a data point of comfort and style.</p>
+                </div>
+                <div class="animate-reveal-up" style="animation-delay: 0.5s">
+                    <h4 class="text-[10px] font-black uppercase tracking-[0.5em] text-[var(--accent-cyan)] mb-6">Legacy
+                    </h4>
+                    <p id="renderLegacyText" class="text-white/30 text-sm leading-relaxed">Built for the 2026 landscape.
+                        We are not just a
+                        brand; we are a historical archive of the future.</p>
+                </div>
+            </div>
+
+            <!-- NEW: Brand Principles -->
+            <section class="mt-32 md:mt-60">
+                <div class="max-w-[1400px] mx-auto">
+                    <div class="mb-12 md:mb-16 text-center md:text-left">
+                        <span class="section-label md:mx-0 mx-auto">Principles</span>
+                        <h3 class="text-5xl md:text-7xl font-black tracking-tighter text-white leading-none">
+                            Built like <span class="text-[var(--accent-cyan)] font-playfair italic">hardware</span>.
+                        </h3>
+                        <p class="text-base md:text-lg text-white/40 mt-6 max-w-3xl leading-relaxed mx-auto md:mx-0">
+                            Clothing websites usually talk about quality, fit, shipping, and support. We do it the AMAZE
+                            way:
+                            a clear, minimal protocol that earns trust fast and converts better.
+                        </p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div class="glass-panel rounded-3xl p-8 border border-white/10">
+                            <div class="flex items-center gap-4 mb-5">
+                                <i class="fas fa-truck-fast text-[var(--accent-cyan)] text-xl"></i>
+                                <h4 class="text-sm font-black uppercase tracking-widest text-white">Fast Dispatch</h4>
+                            </div>
+                            <p class="text-sm text-white/40 leading-relaxed">Orders processed with priority routing.
+                                Real-time status updates via local protocol.</p>
+                        </div>
+                        <div class="glass-panel rounded-3xl p-8 border border-white/10">
+                            <div class="flex items-center gap-4 mb-5">
+                                <i class="fas fa-rotate-left text-[var(--accent-cyan)] text-xl"></i>
+                                <h4 class="text-sm font-black uppercase tracking-widest text-white">Easy Returns</h4>
+                            </div>
+                            <p class="text-sm text-white/40 leading-relaxed">Fit not perfect? Return/exchange flow
+                                designed to be frictionless.</p>
+                        </div>
+                        <div class="glass-panel rounded-3xl p-8 border border-white/10">
+                            <div class="flex items-center gap-4 mb-5">
+                                <i class="fas fa-shield-halved text-[var(--accent-cyan)] text-xl"></i>
+                                <h4 class="text-sm font-black uppercase tracking-widest text-white">Secure Checkout</h4>
+                            </div>
+                            <p class="text-sm text-white/40 leading-relaxed">Protected transmission. Your details stay
+                                inside your local environment.</p>
+                        </div>
+                        <div class="glass-panel rounded-3xl p-8 border border-white/10">
+                            <div class="flex items-center gap-4 mb-5">
+                                <i class="fas fa-headset text-[var(--accent-cyan)] text-xl"></i>
+                                <h4 class="text-sm font-black uppercase tracking-widest text-white">Support</h4>
+                            </div>
+                            <p class="text-sm text-white/40 leading-relaxed">Quick responses for sizing, delivery, and
+                                payment verification protocols.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NEW: Materials & Craft -->
+            <section class="mt-32 md:mt-60">
+                <div class="max-w-[1400px] mx-auto grid lg:grid-cols-2 gap-12 md:gap-20 items-start">
+                    <div class="text-center md:text-left">
+                        <span class="section-label md:mx-0 mx-auto">Materials</span>
+                        <h3 id="renderMaterialsTitle"
+                            class="text-5xl md:text-7xl font-black tracking-tighter text-white leading-[0.95] mb-8">
+                            Fabric is the <span class="text-[var(--accent-cyan)] font-playfair italic">signal</span>.
+                        </h3>
+                        <p id="renderMaterialsText"
+                            class="text-base md:text-lg text-white/40 leading-relaxed mb-10 mx-auto md:mx-0">
+                            Every drop uses controlled fabric selection, strict consistency checks, and a silhouette
+                            that feels premium on first wear.
+                        </p>
+                        <div class="space-y-6">
+                            <div class="flex gap-5">
+                                <i class="fas fa-layer-group text-[var(--accent-cyan)] mt-1"></i>
+                                <div>
+                                    <p class="text-sm font-black uppercase tracking-widest text-white mb-1">Fabric
+                                        Curation</p>
+                                    <p class="text-sm text-white/40 leading-relaxed">We prioritize drape, recovery, and
+                                        comfort. Fabric is selected to look clean under harsh light.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-5">
+                                <i class="fas fa-screwdriver-wrench text-[var(--accent-cyan)] mt-1"></i>
+                                <div>
+                                    <p class="text-sm font-black uppercase tracking-widest text-white mb-1">Stitch &
+                                        Structure</p>
+                                    <p class="text-sm text-white/40 leading-relaxed">Reinforced stress points, stable
+                                        seams, and a finish that holds shape after repeat wear.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-5">
+                                <i class="fas fa-circle-check text-[var(--accent-cyan)] mt-1"></i>
+                                <div>
+                                    <p class="text-sm font-black uppercase tracking-widest text-white mb-1">Quality
+                                        Checks</p>
+                                    <p class="text-sm text-white/40 leading-relaxed">Visual inspection + fit
+                                        verification. Only clean units pass the dispatch protocol.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="glass-panel rounded-[3rem] p-6 border border-white/10 bg-gradient-to-br from-white/5 to-transparent">
+                        <div class="rounded-[2.5rem] overflow-hidden relative">
+                            <img id="renderMaterialsImage"
+                                src="https://images.unsplash.com/photo-1520975958225-0f4a25f2f5ee?auto=format&fit=crop&w=1600&q=80"
+                                alt="THE AMAZE craft protocol" loading="lazy" referrerpolicy="no-referrer"
+                                onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1520975916090-3105956dac38?auto=format&fit=crop&w=1600&q=80';"
+                                class="w-full h-[520px] object-cover opacity-90 hover:scale-105 transition-all duration-1000">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent">
+                            </div>
+                            <div class="absolute bottom-8 left-8 right-8">
+                                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/60 mb-2">CRAFT
+                                    PROTOCOL</p>
+                                <p class="text-white font-bold text-lg leading-snug">Minimal exterior. Maximum presence.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NEW: Fit & Size Guidance -->
+            <section class="mt-32 md:mt-60">
+                <div class="max-w-[1400px] mx-auto">
+                    <div
+                        class="glass-panel rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 border border-white/10 bg-gradient-to-br from-white/5 to-transparent">
+                        <div class="grid lg:grid-cols-3 gap-12 items-start">
+                            <div class="lg:col-span-1 text-center md:text-left">
+                                <span class="section-label md:mx-0 mx-auto">Fit</span>
+                                <h3 class="text-5xl md:text-6xl font-black tracking-tighter text-white leading-[0.95]">
+                                    Dial in your <span
+                                        class="text-[var(--accent-cyan)] font-playfair italic">fit</span>.
+                                </h3>
+                                <p class="text-white/40 text-sm leading-relaxed mt-6">
+                                    Size selection should feel simple. Use product page size chart, then match your
+                                    measurements.
+                                </p>
+                            </div>
+                            <div class="lg:col-span-2 grid md:grid-cols-2 gap-8">
+                                <div class="rounded-3xl p-6 md:p-8 border border-white/10 bg-black/20">
+                                    <div class="flex items-center gap-4 mb-4">
+                                        <i class="fas fa-ruler-combined text-[var(--accent-cyan)]"></i>
+                                        <p class="text-xs md:text-sm font-black uppercase tracking-widest text-white">
+                                            How to Measure</p>
+                                    </div>
+                                    <ul class="space-y-3 text-xs md:text-sm text-white/40 leading-relaxed">
+                                        <li><span class="text-white/70 font-bold">Chest</span>: measure around the
+                                            fullest part.</li>
+                                        <li><span class="text-white/70 font-bold">Length</span>: shoulder to hem.</li>
+                                        <li><span class="text-white/70 font-bold">Waist/Inseam</span>: for denim &
+                                            pants.</li>
+                                    </ul>
+                                </div>
+                                <div class="rounded-3xl p-6 md:p-8 border border-white/10 bg-black/20">
+                                    <div class="flex items-center gap-4 mb-4">
+                                        <i class="fas fa-user-check text-[var(--accent-cyan)]"></i>
+                                        <p class="text-xs md:text-sm font-black uppercase tracking-widest text-white">
+                                            Fit Notes</p>
+                                    </div>
+                                    <ul class="space-y-3 text-xs md:text-sm text-white/40 leading-relaxed">
+                                        <li><span class="text-white/70 font-bold">True to size</span> baseline unless
+                                            stated.</li>
+                                        <li><span class="text-white/70 font-bold">Oversized</span> fits give extra room
+                                            + drape.</li>
+                                        <li><span class="text-white/70 font-bold">Between sizes?</span> size up for
+                                            relaxed look.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NEW: Signals -->
+            <section class="mt-32 md:mt-60">
+                <div class="max-w-[1400px] mx-auto">
+                    <div class="mb-12 md:mb-16 text-center md:text-left">
+                        <span class="section-label md:mx-0 mx-auto">Signals</span>
+                        <h3 class="text-5xl md:text-7xl font-black tracking-tighter text-white leading-none">
+                            Trusted by <span class="text-[var(--accent-cyan)] font-playfair italic">operators</span>.
+                        </h3>
+                        <p class="text-base md:text-lg text-white/40 mt-6 max-w-3xl leading-relaxed mx-auto md:mx-0">
+                            Social proof matters on clothing sites. Here’s what customers usually care about: fabric
+                            feel, fit accuracy, and delivery experience.
+                        </p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="glass-panel rounded-3xl p-8 border border-white/10">
+                            <div class="flex items-center gap-2 text-[var(--accent-cyan)] mb-4">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i><i class="fas fa-star-half-stroke opacity-60"></i>
+                            </div>
+                            <p class="text-white/50 text-sm leading-relaxed">“Fabric feels premium and the silhouette is
+                                clean. The details look even better in-person.”</p>
+                            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 mt-6">Karachi •
+                                Verified</p>
+                        </div>
+                        <div class="glass-panel rounded-3xl p-8 border border-white/10">
+                            <div class="flex items-center gap-2 text-[var(--accent-cyan)] mb-4">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-white/50 text-sm leading-relaxed">“Size chart helped a lot. Delivery was
+                                smooth and packaging looked high-end.”</p>
+                            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 mt-6">Lahore •
+                                Verified</p>
+                        </div>
+                        <div class="glass-panel rounded-3xl p-8 border border-white/10">
+                            <div class="flex items-center gap-2 text-[var(--accent-cyan)] mb-4">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i><i class="fas fa-star-half-stroke opacity-60"></i>
+                            </div>
+                            <p class="text-white/50 text-sm leading-relaxed">“Looks like a luxury brand site. The
+                                product pages feel professional and trustworthy.”</p>
+                            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 mt-6">Islamabad •
+                                Verified</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NEW: FAQ (no JS, native details) -->
+            <section class="mt-32 md:mt-60 mb-20">
+                <div class="max-w-[1400px] mx-auto">
+                    <div class="mb-12 md:mb-16 text-center md:text-left">
+                        <span class="section-label md:mx-0 mx-auto">FAQ</span>
+                        <h3 class="text-5xl md:text-7xl font-black tracking-tighter text-white leading-none">
+                            Quick answers. <br class="md:hidden"><span
+                                class="text-[var(--accent-cyan)] font-playfair italic">Zero noise</span>.
+                        </h3>
+                    </div>
+
+                    <div class="grid lg:grid-cols-2 gap-8">
+                        <details class="glass-panel rounded-3xl p-8 border border-white/10 group">
+                            <summary class="cursor-pointer list-none flex items-center justify-between">
+                                <span class="text-sm font-black uppercase tracking-widest text-white">How do I choose
+                                    the right size?</span>
+                                <i class="fas fa-plus text-white/40 group-open:rotate-45 transition-transform"></i>
+                            </summary>
+                            <p class="text-sm text-white/40 leading-relaxed mt-4">
+                                Open the product page and use <span class="text-white font-bold">Size Chart</span>.
+                                Match chest/length (tops) or waist/inseam (denim) with your measurements.
+                            </p>
+                        </details>
+                        <details class="glass-panel rounded-3xl p-8 border border-white/10 group">
+                            <summary class="cursor-pointer list-none flex items-center justify-between">
+                                <span class="text-sm font-black uppercase tracking-widest text-white">What are the
+                                    delivery timelines?</span>
+                                <i class="fas fa-plus text-white/40 group-open:rotate-45 transition-transform"></i>
+                            </summary>
+                            <p class="text-sm text-white/40 leading-relaxed mt-4">
+                                Delivery depends on your city. Once secured, dispatch protocol begins and you’ll receive
+                                status updates via your local checkout flow.
+                            </p>
+                        </details>
+                        <details class="glass-panel rounded-3xl p-8 border border-white/10 group">
+                            <summary class="cursor-pointer list-none flex items-center justify-between">
+                                <span class="text-sm font-black uppercase tracking-widest text-white">Can I
+                                    exchange/return?</span>
+                                <i class="fas fa-plus text-white/40 group-open:rotate-45 transition-transform"></i>
+                            </summary>
+                            <p class="text-sm text-white/40 leading-relaxed mt-4">
+                                Yes—fit issues are handled via a simple exchange protocol. Keep the item in clean
+                                condition and request support.
+                            </p>
+                        </details>
+                        <details class="glass-panel rounded-3xl p-8 border border-white/10 group">
+                            <summary class="cursor-pointer list-none flex items-center justify-between">
+                                <span class="text-sm font-black uppercase tracking-widest text-white">How does
+                                    EasyPaisa/JazzCash verification work?</span>
+                                <i class="fas fa-plus text-white/40 group-open:rotate-45 transition-transform"></i>
+                            </summary>
+                            <p class="text-sm text-white/40 leading-relaxed mt-4">
+                                Select EasyPaisa/JazzCash in checkout to view account details, then send payment
+                                screenshot + your Order ID to confirm.
+                            </p>
+                        </details>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NEW: CTA -->
+            <section class="mt-20 md:mt-40">
+                <div class="max-w-[1400px] mx-auto">
+                    <div
+                        class="rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-white/10 bg-gradient-to-r from-[var(--accent-cyan)]/15 via-white/5 to-transparent">
+                        <div class="p-10 md:p-16 grid lg:grid-cols-3 gap-10 items-center">
+                            <div class="lg:col-span-2 text-center md:text-left">
+                                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/50 mb-4">NEXT
+                                    STEP</p>
+                                <h3 class="text-4xl md:text-6xl font-black tracking-tighter text-white leading-[0.95]">
+                                    Explore the <br class="md:hidden"><span
+                                        class="text-[var(--accent-cyan)] font-playfair italic">Archive</span>.
+                                </h3>
+                                <p class="text-white/40 text-base md:text-lg mt-6 max-w-2xl mx-auto md:mx-0">
+                                    Browse essentials, vanguard drops, and accessories. Built to convert. Designed to
+                                    dominate.
+                                </p>
+                            </div>
+                            <div class="flex flex-col gap-4">
+                                <a href="archive.html"
+                                    class="w-full py-5 bg-[var(--accent-cyan)] text-black font-black uppercase tracking-[0.2em] rounded-full hover:bg-[var(--accent-teal)] transition-colors text-center text-xs">
+                                    Open Archive
+                                </a>
+                                <a href="contact.html"
+                                    class="w-full py-5 bg-white/10 border border-white/20 text-white font-black uppercase tracking-[0.2em] rounded-full hover:bg-white hover:text-black transition-all text-center text-xs">
+                                    Contact Support
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 py-32 px-10 border-t border-white/5 bg-white/[0.01] backdrop-blur-sm">
+        <div class="max-w-[1700px] mx-auto grid lg:grid-cols-4 gap-20">
+            <div class="lg:col-span-1 text-center lg:text-left">
+                <a href="index.html"
+                    class="flex items-center justify-center lg:justify-start space-x-4 mb-10 group uppercase">
+                    <img src="ChatGPT Image Feb 15, 2026, 10_04_22 PM.png" alt="THE AMAZE Logo"
+                        class="h-12 md:h-14 w-auto rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.1)] group-hover:shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all">
+                    <span class="text-3xl md:text-4xl font-black tracking-tighter">
+                        THE AMAZE<span class="text-[var(--accent-cyan)]">.</span>
+                    </span>
+                </a>
+                <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-white/40 leading-loose">
+                    Architecting high-conversion <br class="hidden lg:block">fashion identities for <br
+                        class="hidden lg:block">the year 2026.
+                </p>
+            </div>
+            <div class="text-center lg:text-left">
+                <span
+                    class="text-[11px] font-black tracking-[0.1em] uppercase text-white/60 mb-10 block border-b border-white/5 pb-4">Navigation</span>
+                <ul class="space-y-6 text-[11px] font-bold uppercase tracking-normal text-white/80">
+                    <li><a href="index.html#home"
+                            class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">Vision</a>
+                    </li>
+                    <li><a href="about.html"
+                            class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">About</a>
+                    </li>
+                    <li><a href="archive.html"
+                            class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">Archive</a>
+                    </li>
+                    <li><a href="index.html#categories"
+                            class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">Curation</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="text-center lg:text-left">
+                <span
+                    class="text-[11px] font-black tracking-[0.1em] uppercase text-white/60 mb-10 block border-b border-white/5 pb-4">Digital
+                    Presence</span>
+                <ul class="space-y-6 text-[11px] font-bold uppercase tracking-normal text-white/80">
+                    <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors italic">Instagram</a></li>
+                    <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors italic">X / Digital</a>
+                    </li>
+                    <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors italic">LinkedIn</a></li>
+                </ul>
+            </div>
+            <div class="text-center lg:text-left">
+                <span
+                    class="text-[11px] font-black tracking-[0.1em] uppercase text-white/60 mb-10 block border-b border-white/5 pb-4">Contact
+                    Protocol</span>
+                <ul class="space-y-6 text-[11px] font-bold uppercase tracking-normal text-white/80">
+                    <li
+                        class="flex items-center justify-center lg:justify-start gap-4 hover:text-[var(--accent-cyan)] transition-all cursor-pointer group">
+                        <i
+                            class="fas fa-phone-alt text-[var(--accent-cyan)] text-xs group-hover:scale-110 transition-transform"></i>
+                        <span>+1 (888) AMAZE-26</span>
+                    </li>
+                    <li
+                        class="flex items-center justify-center lg:justify-start gap-4 hover:text-[var(--accent-cyan)] transition-all cursor-pointer group">
+                        <i
+                            class="fas fa-envelope text-[var(--accent-cyan)] text-xs group-hover:scale-110 transition-transform"></i>
+                        <span>connect@theamaze.fashion</span>
+                    </li>
+                    <li
+                        class="flex items-center justify-center lg:justify-start gap-4 hover:text-[var(--accent-cyan)] transition-all cursor-pointer group">
+                        <i
+                            class="fas fa-map-marker-alt text-[var(--accent-cyan)] text-xs group-hover:scale-110 transition-transform"></i>
+                        <span>Tokyo / Paris / New York</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div
+            class="max-w-[1600px] mx-auto mt-32 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10">
+            <span class="text-[10px] font-bold tracking-[0.1em] text-white/40 uppercase">&copy; 2026 THE AMAZE FASHION
+                PROTOCOL. ALL RIGHTS SECURED.</span>
+            <div class="flex gap-8 text-[10px] font-bold text-white/30 uppercase tracking-normal">
+                <a href="#" class="hover:text-white transition-colors">Privacy</a>
+                <a href="#" class="hover:text-white transition-colors">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Sidebar (Shared) -->
+    <!-- Favorites Sidebar -->
+    <div id="favModal" class="fixed inset-0 z-[200] hidden">
+        <div id="favOverlay" class="absolute inset-0 bg-black/95 backdrop-blur-3xl transition-opacity duration-700">
+        </div>
+        <div id="favPanel"
+            class="absolute right-0 top-0 h-full w-full max-w-2xl bg-black border-l border-white/5 translate-x-full transition-transform duration-700">
+            <div class="flex flex-col h-full p-16">
+                <div class="flex justify-between items-center mb-16">
+                    <h3 class="text-4xl font-black tracking-tighter text-white uppercase">Private Collection<span
+                            class="text-[var(--accent-cyan)]">.</span></h3>
+                    <button id="closeFav" class="text-white/20 hover:text-white transition-colors">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                <!-- Favorites Items Container -->
+                <div id="favItems" class="flex-1 overflow-y-auto pr-6 custom-scrollbar"></div>
+
+                <div class="pt-12 border-t border-white/10">
+                    <p class="text-[9px] font-bold text-white/20 uppercase tracking-widest text-center">
+                        These items are reserved in your local protocol.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="cartModal" class="fixed inset-0 z-[200] hidden">
+        <div id="cartOverlay" class="absolute inset-0 bg-black/95 backdrop-blur-3xl transition-opacity duration-700">
+        </div>
+        <div id="cartPanel"
+            class="absolute right-0 top-0 h-full w-full max-w-2xl bg-black border-l border-white/5 translate-x-full transition-transform duration-700">
+            <div class="flex flex-col h-full p-16">
+                <div class="flex justify-between items-center mb-16">
+                    <h3 class="text-5xl font-black tracking-tighter text-white">YOUR BAG<span
+                            class="text-[var(--accent-cyan)]">.</span></h3>
+                    <button id="closeCart" class="text-white/20 hover:text-white transition-colors"><i
+                            class="fas fa-times text-2xl"></i></button>
+                </div>
+                <div id="cartItems" class="flex-1 overflow-y-auto pr-2 md:pr-6 custom-scrollbar"></div>
+                <div class="pt-8 md:pt-16 border-t border-white/10">
+                    <div class="flex justify-between items-end mb-8 md:mb-12">
+                        <span
+                            class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.5em] text-white/30">Total
+                            Value</span>
+                        <span id="cartTotal" class="text-4xl md:text-6xl font-black text-white">$0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api-client.js"></script>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Determine API Base URL
+                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                const API_BASE = isLocal ? 'http://localhost:5000/api' : 'https://the-amaze-backend.onrender.com/api';
+
+                const response = await fetch(`${API_BASE}/about`);
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.json();
+                if (!data) return;
+
+                const updateDOM = (id, property) => {
+                    const el = document.getElementById(id);
+                    if (el && data[property]) {
+                        if (el.tagName === 'IMG') {
+                            el.src = data[property];
+                        } else {
+                            el.innerHTML = data[property];
+                        }
+                    }
+                };
+
+                updateDOM('renderStoryTitle', 'storyTitle');
+                updateDOM('renderStoryText1', 'storyText1');
+                updateDOM('renderStoryText2', 'storyText2');
+                updateDOM('renderStoryImage', 'storyImage');
+
+                updateDOM('renderPhilosophyText', 'philosophyText');
+                updateDOM('renderEngineeringText', 'engineeringText');
+                updateDOM('renderLegacyText', 'legacyText');
+
+                updateDOM('renderMaterialsTitle', 'materialsTitle');
+                updateDOM('renderMaterialsText', 'materialsText');
+                updateDOM('renderMaterialsImage', 'materialsImage');
+
+            } catch (error) {
+                console.error('Error fetching about data:', error);
+            }
+        });
+    </script>
+</body>
+
+</html>
