@@ -20,6 +20,7 @@ const AMAZE = {
         favorites: JSON.parse(localStorage.getItem('the_amaze_favorites_2026')) || [],
         reviews: JSON.parse(localStorage.getItem(ADMIN_KEYS.REVIEWS)) || [],
         selectedSizes: {},
+        selectedColors: {},
         products: JSON.parse(localStorage.getItem(ADMIN_KEYS.PRODUCTS)) || [
             {
                 id: 1,
@@ -344,44 +345,53 @@ const AMAZE = {
             fetchSafe('/reviews')
         ]);
 
-        // Map backend product structure to frontend structure
-        this.state.products = products.map(p => ({
-            id: p._id, // Use Mongo ID as internal reference
-            uid: p.id, // Keep the numeric ID if needed for routing
-            name: p.name,
-            price: p.price,
-            original: p.originalPrice,
-            badge: p.badge,
-            category: p.category,
-            image: p.mainImage,
-            hoverImage: p.hoverImage,
-            gallery: p.gallery || [],
-            stock: p.stock,
-            description: p.description,
-            sizes: p.sizes || [],
-            colors: p.colors || [],
-            fabric: p.fabric,
-            sizeChart: p.sizeChart || [],
-            isFlashSale: p.isFlashSale,
-            salePrice: p.salePrice
-        }));
+        // Map backend product structure to frontend structure with safety guard
+        if (products && Array.isArray(products)) {
+            this.state.products = products.map(p => ({
+                id: p._id, // Use Mongo ID as internal reference
+                uid: p.id, // Keep the numeric ID if needed for routing
+                name: p.name,
+                price: p.price,
+                original: p.originalPrice,
+                badge: p.badge,
+                category: p.category,
+                image: p.mainImage,
+                hoverImage: p.hoverImage,
+                gallery: p.gallery || [],
+                stock: p.stock,
+                description: p.description,
+                sizes: p.sizes || [],
+                colors: p.variants ? p.variants.map(v => ({ name: v.colorName, hex: v.colorHex || '#000000', image: v.image })) : (p.colors || []),
+                fabric: p.fabric,
+                sizeChart: p.sizeChart || [],
+                isFlashSale: p.isFlashSale,
+                salePrice: p.salePrice || 0
+            }));
+        }
 
         // Initialize state safely
-        this.state.hero = hero;
-        this.state.promo = promo;
-        this.state.sale = sale;
-        this.state.footerData = footer;
-        this.state.lookbook = lookbook;
-        this.state.categories = categories || [];
-        this.state.muses = museData?.muses || [];
-        this.state.museSettings = museData?.settings || {};
-        this.state.contactSubjects = contactSubjects || [];
-        this.state.trustStats = trust || [];
-        this.state.reviews = reviewsData?.reviews?.filter(r => r.approved) || [];
-        this.state.reviewSettings = reviewsData?.settings || {};
+        if (hero) this.state.hero = hero;
+        if (promo) this.state.promo = promo;
+        if (sale) this.state.sale = sale;
+        if (footer) this.state.footerData = footer;
+        if (lookbook) this.state.lookbook = lookbook;
+        this.state.categories = (categories && Array.isArray(categories)) ? categories : this.state.categories;
+
+        if (museData) {
+            this.state.muses = museData.muses || [];
+            this.state.museSettings = museData.settings || {};
+        }
+
+        if (contactSubjects) this.state.contactSubjects = contactSubjects;
+        if (trust) this.state.trustStats = trust;
+
+        if (reviewsData) {
+            this.state.reviews = reviewsData.reviews?.filter(r => r.approved) || [];
+            this.state.reviewSettings = reviewsData.settings || {};
+        }
 
         // Update pulse messages from muse data
-        if (this.state.muses && this.state.muses.length > 0) {
+        if (this.state.muses && Array.isArray(this.state.muses) && this.state.muses.length > 0) {
             this.state.pulseMessages = this.state.muses.map(m => `${m.location}: "${m.text}"`);
         }
 
@@ -415,9 +425,11 @@ const AMAZE = {
             if (h_spotlight) h_spotlight.style.display = hero.enableSpotlight ? 'block' : 'none';
 
             // 1.1 Hero Featured Card Sync
-            if (hero.featuredProductId) {
-                const featuredProduct = this.state.products.find(p => p.id === hero.featuredProductId);
+            const h_f_card = document.getElementById('heroFeaturedCard');
+            if (hero.featuredProductId && h_f_card) {
+                const featuredProduct = this.state.products.find(p => p.id === hero.featuredProductId || p.uid === hero.featuredProductId);
                 if (featuredProduct) {
+                    h_f_card.classList.remove('hidden');
                     const h_f_img = document.getElementById('heroFeaturedImage');
                     const h_f_name = document.getElementById('heroFeaturedName');
                     const h_f_desc = document.getElementById('heroFeaturedDesc');
@@ -442,7 +454,11 @@ const AMAZE = {
                     }
                     if (h_f_add) h_f_add.setAttribute('onclick', `AMAZE.addToCart('${featuredProduct.id}')`);
                     if (h_f_buy) h_f_buy.setAttribute('onclick', `AMAZE.buyNow('${featuredProduct.id}', 1)`);
+                } else {
+                    h_f_card.classList.add('hidden');
                 }
+            } else if (h_f_card) {
+                h_f_card.classList.add('hidden');
             }
 
             // 1.2 Vanguard Spotlight (Multi-Card Sync)
@@ -515,29 +531,33 @@ const AMAZE = {
             const bars = document.querySelectorAll('.promo-bar');
             const marquee = document.querySelector('.animate-marquee');
             if (marquee) {
-                const items = marquee.querySelectorAll('.promo-item');
-                items.forEach(item => {
-                    let content = promo.text;
+                const promoTexts = promo.texts || [promo.text];
 
+                // Helper to format content
+                const formatPromo = (text) => {
+                    let content = text;
                     // 1. Highlight Price Patterns (Rs. 5,999)
                     content = content.replace(/(Rs\.\s*[\d,]+)/gi, '<span class="promo-highlight">$1</span>');
-
                     // 2. Highlight "SALE" (case-insensitive)
                     content = content.replace(/\b(SALE)\b/gi, '<span class="promo-highlight">$1</span>');
-
-                    // 3. Highlight text after colon (excluding colon and spaces)
+                    // 3. Highlight text after colon
                     content = content.replace(/(:\s*)([^<>\n]+)/g, (match, sep, text) => {
                         return `${sep}<span class="promo-highlight">${text.trim()}</span>`;
                     });
-
-                    // 4. Fallback: If promo.code is explicitly provided but not yet highlighted
+                    // 4. Highlight promo code if present
                     if (promo.code && content.includes(promo.code) && !content.includes(`>${promo.code}</span>`)) {
                         const codeRegex = new RegExp(`(${promo.code})`, 'g');
                         content = content.replace(codeRegex, '<span class="promo-highlight">$1</span>');
                     }
+                    return content;
+                };
 
-                    item.innerHTML = content;
-                });
+                // Create items (double them for seamless loop)
+                const itemsHtml = [...promoTexts, ...promoTexts].map(text => `
+                    <div class="promo-item">${formatPromo(text)}</div>
+                `).join('');
+
+                marquee.innerHTML = itemsHtml;
             }
             bars.forEach(bar => bar.style.display = promo.isEnabled ? 'flex' : 'none');
             // Update Top-level margin to accommodate promo bar if visible
@@ -566,7 +586,7 @@ const AMAZE = {
 
                 // Render Sale Products
                 const saleGrid = document.getElementById('saleProductGrid');
-                if (saleGrid) {
+                if (saleGrid && this.state.products && Array.isArray(this.state.products)) {
                     const saleProducts = this.state.products.filter(p => p.isFlashSale);
                     saleGrid.innerHTML = saleProducts.map(p => this.createProductCard(p)).join('');
                 }
@@ -579,20 +599,28 @@ const AMAZE = {
             const f_desc = document.querySelector('footer p');
             const f_copy = document.querySelector('footer div span.text-white\\/20');
             const socialLinks = document.querySelectorAll('footer a');
-            let f_ig, f_x, f_li;
+            let f_fb, f_ig, f_tt;
 
             socialLinks.forEach(link => {
                 const text = link.innerText.toLowerCase();
+                if (text.includes('facebook')) f_fb = link;
                 if (text.includes('instagram')) f_ig = link;
-                if (text.includes('x / digital')) f_x = link;
-                if (text.includes('linkedin')) f_li = link;
+                if (text.includes('tiktok')) f_tt = link;
             });
 
             if (f_desc) f_desc.innerText = footer.description;
             if (f_copy) f_copy.innerText = footer.copyright;
+            if (f_fb) f_fb.href = footer.socials.facebook;
             if (f_ig) f_ig.href = footer.socials.instagram;
-            if (f_x) f_x.href = footer.socials.x;
-            if (f_li) f_li.href = footer.socials.linkedin;
+            if (f_tt) f_tt.href = footer.socials.tiktok;
+
+            // Update Contact info
+            const contactLinks = document.querySelectorAll('footer ul:last-of-type span');
+            if (contactLinks.length >= 3 && footer.contact) {
+                contactLinks[0].innerText = footer.contact.phone;
+                contactLinks[1].innerText = footer.contact.email;
+                contactLinks[2].innerText = footer.contact.location;
+            }
 
             const cols = document.querySelectorAll('footer > div > div');
             if (cols.length >= 4) {
@@ -616,11 +644,11 @@ const AMAZE = {
             }
         }
 
-        // 6. Categories (Bento Grid)
+        // 6. Categories (Bento & Menu)
         const categories = this.state.categories;
-        if (categories && categories.length >= 3) {
+        if (categories) {
             const bentoBlocks = document.querySelectorAll('.bento-grid > div');
-            if (bentoBlocks.length >= 3) {
+            if (bentoBlocks.length >= 3 && categories.length >= 3) {
                 categories.forEach((cat, i) => {
                     const block = bentoBlocks[i];
                     if (!block) return;
@@ -633,26 +661,39 @@ const AMAZE = {
                     if (link) link.href = `archive.html?category=${cat.uid}`;
                 });
             }
+
+            const menuCatList = document.getElementById('menuCategories');
+            if (menuCatList) {
+                menuCatList.innerHTML = categories.map(cat => `
+                    <li>
+                        <a href="archive.html?category=${cat.uid}" 
+                           class="text-[11px] font-bold uppercase tracking-[0.2em] text-white/40 hover:text-[var(--accent-cyan)] transition-all flex items-center gap-3 group">
+                            <i class="fas fa-chevron-right text-[8px] text-white/10 group-hover:text-[var(--accent-cyan)] group-hover:translate-x-1 transition-all"></i>
+                            ${cat.name}
+                        </a>
+                    </li>
+                `).join('');
+            }
         }
 
         // 7. Muse Archive (Social Proof)
         const muses = this.state.muses;
-        if (muses && muses.length >= 3) {
-            const museCards = document.querySelectorAll('#lookbook + section .grid > div');
+        if (muses && Array.isArray(muses) && muses.length >= 3) {
+            const museCards = document.querySelectorAll('#muse .grid > div');
             if (museCards.length >= 3) {
                 muses.forEach((muse, i) => {
                     const card = museCards[i];
                     if (!card) return;
                     const img = card.querySelector('img');
-                    const role = card.querySelector('span.text-accent-cyan');
+                    const role = card.querySelector('span.text-accent-cyan') || card.querySelector('span.text-xs');
                     const author = card.querySelector('h4');
-                    const quote = card.nextElementSibling;
+                    const quote = card.querySelector('p.text-white\\/40');
 
-                    if (img) img.src = muse.image;
-                    if (role) role.innerText = muse.location;
-                    if (author) author.innerText = muse.author;
-                    if (quote && quote.tagName === 'P') {
-                        quote.innerText = muse.text;
+                    if (img && muse.image) img.src = muse.image;
+                    if (role && muse.location) role.innerText = muse.location;
+                    if (author && muse.author) author.innerText = muse.author;
+                    if (quote) {
+                        quote.innerText = `"${muse.text}"`;
                     }
                 });
             }
@@ -724,7 +765,12 @@ const AMAZE = {
             checkoutOverlay: document.getElementById('checkoutOverlay'),
             closeCheckout: document.getElementById('closeCheckout'),
             categoriesContainer: document.getElementById('categoriesContainer'),
-            categoryFilters: document.getElementById('categoryFilters')
+            categoryFilters: document.getElementById('categoryFilters'),
+            searchBtn: document.getElementById('searchBtn'),
+            searchOverlay: document.getElementById('searchOverlay'),
+            closeSearch: document.getElementById('closeSearch'),
+            searchInput: document.getElementById('searchInput'),
+            searchResults: document.getElementById('searchResults'),
         };
     },
 
@@ -738,8 +784,44 @@ const AMAZE = {
         this.dom.menuBtn?.addEventListener('click', () => this.toggleMenu(true));
         this.dom.closeMenu?.addEventListener('click', () => this.toggleMenu(false));
         this.dom.menuOverlay?.addEventListener('click', () => this.toggleMenu(false));
+        this.dom.searchBtn?.addEventListener('click', () => this.toggleSearch(true));
+        this.dom.closeSearch?.addEventListener('click', () => this.toggleSearch(false));
+        this.dom.searchInput?.addEventListener('input', (e) => this.handleSearch(e));
+
         window.addEventListener('scroll', () => this.handleScroll());
         window.addEventListener('mousemove', (e) => this.handleCursorMove(e));
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.toggleSearch(false);
+                this.toggleCart(false);
+                this.toggleFavorites(false);
+                this.toggleMenu(false);
+                this.toggleCheckout(false);
+            }
+        });
+    },
+
+    updateSEO(data) {
+        if (!data) return;
+        const title = data.name ? `${data.name} | THE AMAZE Premium Clothing` : 'THE AMAZE Fashion | 2026 Global Showroom';
+        const description = data.description || 'Premium technical garments and digital sculptures.';
+
+        document.title = title;
+
+        const metaDesc = document.getElementById('meta-description');
+        if (metaDesc) metaDesc.setAttribute('content', description);
+
+        const ogTitle = document.getElementById('og-title');
+        if (ogTitle) ogTitle.setAttribute('content', title);
+
+        const ogDesc = document.getElementById('og-og-description');
+        if (ogDesc) ogDesc.setAttribute('content', description);
+
+        const ogImage = document.getElementById('og-image');
+        if (ogImage && (data.image || data.mainImage)) {
+            ogImage.setAttribute('content', data.image || data.mainImage);
+        }
     },
 
     handleScroll() {
@@ -800,10 +882,70 @@ const AMAZE = {
     renderProducts() {
         if (!this.dom.productGrid) return;
         const filtered = this.state.filter === 'all'
-            ? this.state.products.slice(0, 4)
+            ? this.state.products.slice(0, 8)
             : this.state.products.filter(p => p.category === this.state.filter);
 
         this.dom.productGrid.innerHTML = filtered.map(p => this.createProductCard(p)).join('');
+    },
+
+    toggleSearch(show) {
+        if (!this.dom.searchOverlay) return;
+        if (show) {
+            this.dom.searchOverlay.classList.remove('hidden');
+            setTimeout(() => {
+                this.dom.searchInput?.focus();
+            }, 100);
+            document.body.style.overflow = 'hidden';
+        } else {
+            this.dom.searchOverlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    },
+
+    handleSearch(e) {
+        const query = e.target.value.toLowerCase().trim();
+        const resultsContainer = this.dom.searchResults;
+        if (!resultsContainer) return;
+
+        if (query.length < 2) {
+            resultsContainer.innerHTML = '';
+            resultsContainer.classList.add('hidden');
+            return;
+        }
+
+        const matches = this.state.products.filter(p =>
+            p.name.toLowerCase().includes(query) ||
+            p.category.toLowerCase().includes(query) ||
+            p.description.toLowerCase().includes(query)
+        );
+
+        resultsContainer.classList.remove('hidden');
+
+        if (matches.length === 0) {
+            resultsContainer.innerHTML = `
+                <div class="col-span-full py-12 md:py-20 text-center">
+                    <p class="text-white/20 text-xs md:text-sm font-black uppercase tracking-widest leading-loose">
+                        No Protocol Matches Found<br>
+                        <span class="text-[9px] lowercase opacity-50 tracking-normal italic font-light">Refine your search parameters.</span>
+                    </p>
+                </div>
+            `;
+            return;
+        }
+
+        resultsContainer.innerHTML = matches.map(p => `
+            <div class="group cursor-pointer bg-white/[0.03] border border-white/5 p-4 rounded-2xl hover:border-[accent-cyan]/40 hover:bg-white/[0.05] transition-all duration-500" 
+                 onclick="window.location.href='product.html?id=${p.id}'">
+                <div class="aspect-square mb-4 overflow-hidden rounded-xl bg-black">
+                    <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 opacity-80 group-hover:opacity-100">
+                </div>
+                <div>
+                    <span class="text-[9px] font-black tracking-widest text-[accent-cyan] uppercase mb-1 block">${p.category}</span>
+                    <h4 class="text-xs md:text-sm font-black text-white uppercase tracking-tighter">${p.name}</h4>
+                    <p class="text-[10px] md:text-xs text-white/40 mt-1 font-bold italic">Rs. ${p.price}</p>
+                </div>
+            </div>
+        `).join('').replace(/\[accent-cyan\]/g, 'var(--accent-cyan)');
     },
 
     renderProductDetails() {
@@ -847,21 +989,28 @@ const AMAZE = {
             </div>
         ` : '';
 
+        // Pre-select first color
+        if (product.colors && product.colors.length > 0 && !this.state.selectedColors[product.id]) {
+            const first = product.colors[0];
+            this.state.selectedColors[product.id] = typeof first === 'object' ? first.name : first;
+        }
+
         // Generate Color Options
         const colorsHtml = product.colors && product.colors.length > 0 ? `
             <div class="mb-12">
                 <span class="block text-[9px] font-black uppercase tracking-widest text-white/40 mb-4">Select Pigment</span>
-                <div class="flex flex-wrap gap-4">
+                <div class="flex flex-wrap gap-4" data-color-group="${product.id}">
                     ${product.colors.map((c, i) => {
             const isObj = typeof c === 'object';
             const hex = isObj ? c.hex : c;
             const name = isObj ? c.name : `Pigment ${i + 1}`;
             const img = isObj ? (c.image || product.image) : product.image;
+            const isSelected = this.state.selectedColors[product.id] === name;
 
             return `
-                        <button onclick="this.parentElement.querySelectorAll('div').forEach(d => d.classList.remove('ring-2', 'ring-[var(--accent-cyan)]', 'ring-offset-2', 'ring-offset-black', 'scale-110')); this.querySelector('div').classList.add('ring-2', 'ring-[var(--accent-cyan)]', 'ring-offset-2', 'ring-offset-black', 'scale-110'); AMAZE.setProductImage('${img}');" 
+                        <button onclick="AMAZE.selectColor('${product.id}', '${name}', '${img}', this)" 
                             class="group relative w-8 h-8 rounded-full focus:outline-none" title="${name}">
-                            <div class="w-full h-full rounded-full border border-white/20 transition-all duration-300 ${i === 0 ? 'ring-2 ring-[var(--accent-cyan)] ring-offset-2 ring-offset-black scale-110' : 'group-hover:scale-110'}" style="background-color: ${hex};"></div>
+                            <div class="w-full h-full rounded-full border border-white/20 transition-all duration-300 ${isSelected ? 'ring-2 ring-[var(--accent-cyan)] ring-offset-2 ring-offset-black scale-110' : 'group-hover:scale-110'}" style="background-color: ${hex};"></div>
                         </button>
                         `;
         }).join('')}
@@ -906,7 +1055,7 @@ const AMAZE = {
 
                 <div class="flex items-end gap-6 mb-12">
                     <span class="text-4xl font-bold text-[var(--accent-cyan)]">RS.${product.isFlashSale ? product.salePrice : product.price}</span>
-                    <span class="text-xl text-white/20 line-through decoration-white/20 mb-1">RS.${product.isFlashSale ? product.price : product.original}</span>
+                    <span class="text-xl text-white/20 line-through decoration-white/20 mb-1">RS.${product.isFlashSale ? product.price : (product.original || 0)}</span>
                 </div>
 
                 <div class="prose prose-invert mb-12">
@@ -975,6 +1124,7 @@ const AMAZE = {
         this.renderProductGallery(product);
         this.renderReviews(product.id);
         this.renderPairings(product);
+        this.updateSEO(product);
 
         // Zoom Logic
         setTimeout(() => {
@@ -1029,20 +1179,25 @@ const AMAZE = {
             const activeCategories = categories.filter(c => c.isActive !== false);
             this.dom.categoriesContainer.innerHTML = activeCategories.map((c, idx) => {
                 // Determine grid layout based on index (bento style)
-                let gridClass = "col-span-12 md:col-span-4 row-span-2"; // Small/Secondary
-                if (idx === 0) gridClass = "col-span-12 md:col-span-8 row-span-4"; // Large/Primary
+                let gridClass = "col-span-12 md:col-span-4 row-span-2"; // Secondary
+                let nameClass = "text-xl md:text-3xl"; // Secondary text size
+
+                if (idx === 0) {
+                    gridClass = "col-span-12 md:col-span-8 row-span-4"; // Primary
+                    nameClass = "text-2xl md:text-5xl"; // Primary text size
+                }
 
                 return `
-                    <div class="${gridClass} relative group overflow-hidden rounded-[2rem] md:rounded-[3rem] glass-panel p-2">
+                    <div class="${gridClass} relative group overflow-hidden rounded-[2rem] md:rounded-[3rem] glass-panel p-3 hover:border-[var(--accent-cyan)]/30 transition-all duration-700">
                         <a href="archive.html?filter=${c.uid}"
-                            class="relative block w-full h-full min-h-[250px] md:min-h-0 overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem]">
+                            class="relative block w-full h-full min-h-[300px] md:min-h-0 overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem]">
                             <img src="${c.image}"
-                                class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-1000">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80"></div>
-                            <div class="absolute bottom-8 left-8 md:bottom-12 md:left-12 z-10 transition-transform duration-500 group-hover:translate-x-2">
-                                <span class="block text-2xl md:text-5xl font-black text-white mb-2 uppercase tracking-tighter">${c.name}</span>
-                                <span class="text-[9px] md:text-xs font-bold uppercase tracking-[0.4em] text-[var(--accent-cyan)] flex items-center gap-3">
-                                    Explore Archive <i class="fas fa-arrow-right"></i>
+                                class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all duration-1000 grayscale-[0.2] group-hover:grayscale-0">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent opacity-80 transition-opacity duration-700 group-hover:opacity-60"></div>
+                            <div class="absolute bottom-8 left-8 md:bottom-12 md:left-12 z-10 transition-all duration-500 group-hover:translate-x-2">
+                                <span class="block ${nameClass} font-black text-white mb-2 uppercase tracking-tighter group-hover:text-[var(--accent-cyan)] transition-colors">${c.name}</span>
+                                <span class="text-[9px] md:text-xs font-bold uppercase tracking-[0.4em] text-white/50 group-hover:text-white flex items-center gap-3">
+                                    Explore Archive <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-2 transition-transform"></i>
                                 </span>
                             </div>
                         </a>
@@ -1081,6 +1236,21 @@ const AMAZE = {
         }
         el.classList.remove('border-white/20', 'text-white/60');
         el.classList.add('bg-white', 'text-black', 'border-white');
+    },
+
+    selectColor(productId, colorName, image, el) {
+        this.state.selectedColors[productId] = colorName;
+        // Image swap handled by existing logic or here
+        if (image) this.setProductImage(image);
+
+        const group = el.closest('[data-color-group]');
+        if (group) {
+            group.querySelectorAll('div').forEach(d => {
+                d.classList.remove('ring-2', 'ring-[var(--accent-cyan)]', 'ring-offset-2', 'ring-offset-black', 'scale-110');
+            });
+        }
+        const inner = el.querySelector('div');
+        if (inner) inner.classList.add('ring-2', 'ring-[var(--accent-cyan)]', 'ring-offset-2', 'ring-offset-black', 'scale-110');
     },
 
     renderProductGallery(product) {
@@ -1173,7 +1343,7 @@ const AMAZE = {
                     </div>
                     <div class="text-right">
                         <span class="block text-xl font-bold text-[var(--accent-cyan)]">RS.${(p.isFlashSale ? p.salePrice : p.price) || 0}</span>
-                        ${p.isFlashSale ? `<span class="block text-xs text-white/20 line-through tracking-tighter">RS.${p.price || 0}</span>` : `<span class="block text-[10px] text-white/20 line-through tracking-tighter">RS.${p.original || 0}</span>`}
+                        ${p.isFlashSale ? `<span class="block text-xs text-white/20 line-through tracking-tighter">RS.${p.price || 0}</span>` : (p.original && p.original !== p.price ? `<span class="block text-[10px] text-white/20 line-through tracking-tighter">RS.${p.original}</span>` : '')}
                     </div>
                 </div>
         </div>
@@ -1319,7 +1489,7 @@ const AMAZE = {
         this.updateCart();
         this.toggleCart(true);
         this.ensureSavedEmailBars();
-        this.notify(`Archive Protocol: ${quantity}x ${product.name} Secured`, 'success');
+        this.notify(`Collection Update: ${quantity}x ${product.name} Added`, 'success');
     },
 
     saveCart() {
@@ -1334,7 +1504,7 @@ const AMAZE = {
         if (this.dom.cartTotal) this.dom.cartTotal.textContent = `RS.${total} `;
 
         if (count === 0) {
-            if (this.dom.cartItems) this.dom.cartItems.innerHTML = `<div class="mt-20 text-center opacity-20 text-[10px] font-black uppercase tracking-widest">Bag Protocol Empty</div>`;
+            if (this.dom.cartItems) this.dom.cartItems.innerHTML = `<div class="mt-20 text-center opacity-20 text-[10px] font-black uppercase tracking-widest">Your Bag is Empty</div>`;
         } else if (this.dom.cartItems) {
             // Group items by ID to show quantity in cart
             const grouped = {};
@@ -1438,12 +1608,20 @@ const AMAZE = {
 
     cartBuyNow() {
         if (!this.state.cart.length) {
-            this.notify('Bag Protocol Empty', 'info');
+            this.notify('Your Bag is Empty', 'info');
             return;
         }
-        const first = this.state.cart[0];
-        const qty = this.state.cart.filter(p => p.id === first.id).length;
-        this.buyNow(first.id, qty);
+        // Group cart items to handle quantities
+        const grouped = {};
+        this.state.cart.forEach(item => {
+            if (!grouped[item.id]) {
+                grouped[item.id] = { ...item, quantity: 0 };
+            }
+            grouped[item.id].quantity++;
+        });
+
+        const items = Object.values(grouped);
+        this.buyNow(items);
     },
 
     renderPairings(product) {
@@ -1467,7 +1645,7 @@ const AMAZE = {
                     <div>
                         <span class="section-label">Perfect Pairing</span>
                         <h3 class="text-4xl md:text-5xl font-black tracking-tighter text-white uppercase">
-                            Complete the <span class="text-[var(--accent-cyan)] font-playfair italic">Protocol.</span>
+                            Complete the <span class="text-[var(--accent-cyan)] font-playfair italic">Look.</span>
                         </h3>
                         <p class="mt-3 text-sm text-white/40 max-w-xl">
                             Styled recommendations that sit perfectly with <span class="font-semibold text-white">${product.name}</span>.
@@ -1696,14 +1874,34 @@ const AMAZE = {
         return '★'.repeat(rating) + '☆'.repeat(5 - rating);
     },
 
-    buyNow(id, quantity = 1, customPrice = null, isSale = false) {
-        let product = this.state.products.find(p => p.id === id);
-        if (product) {
-            if (customPrice) {
-                // Clone product to avoid modifying original state if needed
-                product = { ...product, price: customPrice, isSale: isSale };
+    /**
+     * @param {Object|Array} input - Either a single ID (for legacy) or an array of {product, quantity}
+     * @param {Number} [quantity=1] - Used if input is an ID
+     */
+    buyNow(input, quantity = 1, customPrice = null, isSale = false) {
+        let items = [];
+        if (Array.isArray(input)) {
+            items = input.map(item => ({
+                product: item,
+                quantity: item.quantity || 1,
+                price: item.salePrice || item.price
+            }));
+        } else {
+            let product = this.state.products.find(p => p.id === input);
+            if (product) {
+                if (customPrice) {
+                    product = { ...product, price: customPrice, isSale: isSale };
+                }
+                items = [{
+                    product: product,
+                    quantity: quantity,
+                    price: product.salePrice || product.price
+                }];
             }
-            this.renderCheckoutModal(product, quantity);
+        }
+
+        if (items.length > 0) {
+            this.renderCheckoutModal(items);
         }
     },
 
@@ -1737,6 +1935,14 @@ const AMAZE = {
                     return `<tr class="border-b border-white/10"><td class="py-3 pr-6 text-sm font-bold text-white uppercase">${size}</td><td class="py-3 flex flex-wrap gap-4">${cells}</td></tr>`;
                 }).join('');
                 tableHtml = `<table class="w-full text-left">${rows}</table>`;
+            }
+            // Handle Image URL Format
+            else if (typeof p.sizeChart === 'string' && (p.sizeChart.startsWith('http') || p.sizeChart.startsWith('/'))) {
+                tableHtml = `
+                    <div class="rounded-2xl overflow-hidden border border-white/10">
+                        <img src="${p.sizeChart}" class="w-full h-auto" alt="Size Chart">
+                    </div>
+                `;
             }
             // Auto-generate if no chart but has sizes
             else {
@@ -1840,198 +2046,202 @@ const AMAZE = {
         }
     },
 
-    renderCheckoutModal(product, quantity) {
-        this.state.lastCheckout = { product, quantity };
-        const subtotal = product.price * quantity;
+    renderCheckoutModal(items) {
+        this.state.lastCheckoutItems = items;
+        const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
         const shipping = subtotal >= 5000 ? 0 : 250;
         const shippingLabel = shipping === 0 ? 'Free (Order ≥ 5000)' : 'Rs. 250';
         const total = subtotal + shipping;
-        // Create modal if not exists
+
+        // Ensure modal base exists
         if (!document.getElementById('checkoutModal')) {
-            const modalHtml = `
+            const modalBase = `
                 <div id="checkoutModal" class="fixed inset-0 z-[9999] hidden">
                     <div id="checkoutOverlay" class="absolute inset-0 bg-black/80 backdrop-blur-xl transition-opacity duration-500 opacity-0"></div>
-                    <div id="checkoutPanel" class="absolute inset-0 md:inset-10 bg-[#050505] border border-white/10 rounded-3xl overflow-hidden flex flex-col md:flex-row transform scale-95 opacity-0 transition-all duration-500">
-                        
-                        <!-- Left: Form -->
-                        <div class="flex-1 p-8 md:p-12 overflow-y-auto custom-scrollbar relative">
-                            <button id="closeCheckout" class="absolute top-8 right-8 text-white/40 hover:text-white transition-colors">
-                            <i class="fas fa-times text-2xl"></i>
-                            </button>
-                            
-                            <div class="mb-10">
-                            <h2 class="text-3xl font-black text-white uppercase tracking-tighter mb-2">Secure Checkout</h2>
-                            <div class="flex items-center gap-3">
-                                <p class="text-[var(--accent-cyan)] text-xs font-bold uppercase tracking-widest">Encrypted Transmission Protocol</p>
-                                ${product.isSale ? '<span class="px-2 py-0.5 bg-red-500 text-white text-[10px] font-black rounded uppercase tracking-tighter">Flash Sale</span>' : ''}
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalBase);
+        } else {
+            // Clear existing panel if any
+            const panel = document.getElementById('checkoutPanel');
+            if (panel) panel.remove();
+        }
+
+        const modalHtml = `
+            <div id="checkoutPanel" class="absolute inset-2 md:inset-10 bg-[#050505] border border-white/10 rounded-2xl md:rounded-3xl overflow-hidden flex flex-col transform scale-95 opacity-0 transition-all duration-500">
+                <div class="p-5 md:p-8 border-b border-white/10 flex justify-between items-center relative z-30 bg-[#050505]">
+                    <div>
+                        <h2 class="text-xl md:text-3xl font-black text-white uppercase tracking-tighter mb-0.5">Secure Transaction</h2>
+                        <p class="text-[var(--accent-cyan)] text-[9px] md:text-xs font-black uppercase tracking-[0.2em]">Encrypted Pulse Protocol • ${items.length} Artifact${items.length > 1 ? 's' : ''}</p>
+                    </div>
+                    <button id="closeCheckout" class="text-white/40 hover:text-white transition-colors p-2">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <div class="flex-1 flex flex-col-reverse md:flex-row overflow-y-auto md:overflow-hidden custom-scrollbar">
+                    <div class="flex-1 p-5 md:p-12 md:overflow-y-auto custom-scrollbar relative bg-[#050505]">
+                        <form onsubmit="event.preventDefault(); AMAZE.processPayment();" class="space-y-6 md:space-y-8">
+                            <div class="space-y-3 md:space-y-4">
+                                <h3 class="text-[10px] md:text-xs font-black text-white uppercase tracking-[0.2em]">Customer Ident</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                                    <input id="checkoutEmail" type="email" placeholder="Email Address" required class="bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--accent-cyan)] transition-colors w-full">
+                                    <input id="checkoutPhone" type="tel" placeholder="Mobile Protocol (03XX..)" required class="bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--accent-cyan)] transition-colors w-full">
+                                </div>
                             </div>
-                        </div>
 
-                            <form onsubmit="event.preventDefault(); AMAZE.processPayment();" class="space-y-8">
-                                <!-- Contact -->
-                                <div class="space-y-4">
-                                    <h3 class="text-sm font-bold text-white uppercase tracking-widest">Contact</h3>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <input id="checkoutEmail" type="email" placeholder="Email" required class="bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--accent-cyan)] transition-colors">
-                                        <input id="checkoutPhone" type="tel" placeholder="Mobile Number" required class="bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--accent-cyan)] transition-colors">
-                                    </div>
+                            <div id="checkoutSpecsContainer" class="space-y-6">
+                                ${items.map(item => {
+            const p = item.product;
+            if ((!p.sizes || p.sizes.length === 0) && (!p.variants || p.variants.length === 0)) return '';
+            return `
+                                    <div class="p-6 bg-white/5 border border-white/10 rounded-2xl space-y-4">
+                                        <p class="text-[10px] font-black uppercase text-white/30 tracking-widest">${p.name} Specs</p>
+                                        ${p.sizes?.length > 0 ? `
+                                        <div>
+                                            <span class="block text-[9px] font-bold text-white/20 uppercase mb-2">Size</span>
+                                            <div class="flex flex-wrap gap-2">
+                                                ${p.sizes.map(s => {
+                const sel = this.state.selectedSizes[p.id] === s;
+                return `<button type="button" onclick="AMAZE.selectSize('${p.id}', '${s}', this)" class="w-10 h-10 border ${sel ? 'bg-white text-black border-white' : 'border-white/20 text-white/40'} rounded-lg text-[10px] font-black transition-all">${s}</button>`;
+            }).join('')}
+                                            </div>
+                                        </div>` : ''}
+                                        ${p.variants?.length > 0 ? `
+                                        <div>
+                                            <span class="block text-[9px] font-bold text-white/20 uppercase mb-2">Pigment</span>
+                                            <div class="flex flex-wrap gap-3">
+                                                ${p.variants.map((v, i) => {
+                const sel = this.state.selectedColors[p.id] === v.colorName;
+                return `<button type="button" onclick="AMAZE.selectColor('${p.id}', '${v.colorName}', '${v.image}', this)" class="w-8 h-8 rounded-full"><div class="w-full h-full rounded-full border border-white/20 transition-all ${sel ? 'ring-2 ring-[var(--accent-cyan)] ring-offset-2 ring-offset-black scale-110' : ''}" style="background-color: ${v.colorHex || '#000'}"></div></button>`;
+            }).join('')}
+                                            </div>
+                                        </div>` : ''}
+                                    </div>`;
+        }).join('')}
+                            </div>
+
+                            <div class="space-y-3 md:space-y-4">
+                                <h3 class="text-[10px] md:text-xs font-black text-white uppercase tracking-[0.2em]">Deployment</h3>
+                                <div class="grid grid-cols-2 gap-3 md:gap-4">
+                                    <input id="checkoutFirstName" type="text" placeholder="First Name" required class="bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--accent-cyan)] transition-colors">
+                                    <input id="checkoutLastName" type="text" placeholder="Last Name" required class="bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--accent-cyan)] transition-colors">
                                 </div>
-
-                                <!-- Delivery -->
-                                <div class="space-y-4">
-                                    <h3 class="text-sm font-bold text-white uppercase tracking-widest">Delivery</h3>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <input id="checkoutFirstName" type="text" placeholder="First Name" required class="bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--accent-cyan)] transition-colors">
-                                        <input id="checkoutLastName" type="text" placeholder="Last Name" required class="bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--accent-cyan)] transition-colors">
-                                    </div>
-                                    <input id="checkoutAddress" type="text" placeholder="Address" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--accent-cyan)] transition-colors">
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <input id="checkoutCity" type="text" placeholder="City" required class="bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--accent-cyan)] transition-colors">
-                                        <input id="checkoutPostal" type="text" placeholder="Postal Code (Optional)" class="bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--accent-cyan)] transition-colors">
-                                    </div>
+                                <input id="checkoutAddress" type="text" placeholder="Address" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--accent-cyan)] transition-colors">
+                                <div class="grid grid-cols-2 gap-3 md:gap-4">
+                                    <input id="checkoutCity" type="text" placeholder="City" required class="bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--accent-cyan)] transition-colors">
+                                    <input id="checkoutPostal" type="text" placeholder="Postal Code" class="bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-white/20 focus:outline-none focus:border-[var(--accent-cyan)] transition-colors">
                                 </div>
+                            </div>
 
-                                <!-- Shipping -->
-                                <div class="space-y-4">
-                                    <h3 class="text-sm font-bold text-white uppercase tracking-widest">Shipping Method</h3>
-                                    <label class="flex items-center justify-between p-4 border border-[var(--accent-cyan)] bg-[var(--accent-cyan)]/10 rounded-xl cursor-pointer">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-4 h-4 rounded-full bg-[var(--accent-cyan)] shadow-[0_0_10px_var(--accent-cyan)]"></div>
-                                            <span class="text-sm font-bold text-white">Standard Delivery</span>
-                                        </div>
-                                        <span class="text-sm font-bold text-white">Free</span>
+                            <div class="space-y-3 md:space-y-4">
+                                <h3 class="text-[10px] md:text-xs font-black text-white uppercase tracking-[0.2em]">Fulfillment</h3>
+                                <div id="paymentOptionsBox" class="space-y-2 md:space-y-3">
+                                    <label data-payment="cod" class="payment-label flex items-center gap-3 p-4 border border-[var(--accent-cyan)] bg-[var(--accent-cyan)]/5 rounded-xl cursor-pointer relative overflow-hidden group/pay" onclick="AMAZE.selectPayment('cod')">
+                                        <div class="w-4 h-4 rounded-full border border-[var(--accent-cyan)] flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-[var(--accent-cyan)]"></div></div>
+                                        <span class="text-[10px] md:text-sm font-black text-white uppercase tracking-widest">Cash on Delivery</span>
+                                    </label>
+                                    <label data-payment="easypaisa" class="payment-label flex items-center gap-3 p-4 border border-white/10 bg-white/5 rounded-xl cursor-pointer opacity-50 hover:opacity-100 transition-all relative overflow-hidden group/pay" onclick="AMAZE.selectPayment('easypaisa')">
+                                        <div class="w-4 h-4 rounded-full border border-white/20 flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-transparent"></div></div>
+                                        <span class="text-[10px] md:text-sm font-black text-white uppercase tracking-widest">EasyPaisa</span>
+                                    </label>
+                                    <label data-payment="jazzcash" class="payment-label flex items-center gap-3 p-4 border border-white/10 bg-white/5 rounded-xl cursor-pointer opacity-50 hover:opacity-100 transition-all relative overflow-hidden group/pay" onclick="AMAZE.selectPayment('jazzcash')">
+                                        <div class="w-4 h-4 rounded-full border border-white/20 flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-transparent"></div></div>
+                                        <span class="text-[10px] md:text-sm font-black text-white uppercase tracking-widest">JazzCash</span>
                                     </label>
                                 </div>
-
-                                <!-- Payment -->
-                                <div class="space-y-4">
-                                    <h3 class="text-sm font-bold text-white uppercase tracking-widest">Payment Method</h3>
-                                    <div id="paymentOptionsBox" class="space-y-3">
-                                        <!-- COD -->
-                                        <label data-payment="cod" class="payment-label flex items-center gap-3 p-4 border border-[var(--accent-cyan)] bg-[var(--accent-cyan)]/5 rounded-xl cursor-pointer relative overflow-hidden group/pay opacity-100" onclick="AMAZE.selectPayment('cod')">
-                                            <div class="w-4 h-4 rounded-full border border-[var(--accent-cyan)] flex items-center justify-center">
-                                                <div class="w-2 h-2 rounded-full bg-[var(--accent-cyan)]"></div>
-                                            </div>
-                                            <span class="text-sm font-bold text-white">Cash on Delivery</span>
-                                            <i class="fas fa-money-bill-wave ml-auto text-white/40"></i>
-                                        </label>
-
-                                        <!-- EasyPaisa -->
-                                        <label data-payment="easypaisa" class="payment-label flex items-center gap-3 p-4 border border-white/10 bg-white/5 rounded-xl cursor-pointer opacity-50 hover:opacity-100 transition-all relative overflow-hidden group/pay" onclick="AMAZE.selectPayment('easypaisa')">
-                                            <div class="w-4 h-4 rounded-full border border-white/20 flex items-center justify-center">
-                                                <div class="w-2 h-2 rounded-full bg-transparent"></div>
-                                            </div>
-                                            <span class="text-sm font-bold text-white">EasyPaisa</span>
-                                            <span class="ml-auto text-xs font-bold text-green-500 bg-green-500/10 px-2 py-1 rounded">Fast</span>
-                                        </label>
-
-                                        <!-- JazzCash -->
-                                        <label data-payment="jazzcash" class="payment-label flex items-center gap-3 p-4 border border-white/10 bg-white/5 rounded-xl cursor-pointer opacity-50 hover:opacity-100 transition-all relative overflow-hidden group/pay" onclick="AMAZE.selectPayment('jazzcash')">
-                                            <div class="w-4 h-4 rounded-full border border-white/20 flex items-center justify-center">
-                                                <div class="w-2 h-2 rounded-full bg-transparent"></div>
-                                            </div>
-                                            <span class="text-sm font-bold text-white">JazzCash</span>
-                                            <span class="ml-auto text-xs font-bold text-red-500 bg-red-500/10 px-2 py-1 rounded">Secure</span>
-                                        </label>
-                                    </div>
-                                    <div id="paymentAccountDetails" class="hidden mt-4 p-4 bg-black/30 border border-[var(--accent-cyan)]/30 rounded-xl space-y-3">
-                                        <p class="text-xs font-bold text-[var(--accent-cyan)] uppercase tracking-widest">Account Details</p>
-                                        <div id="paymentAccountContent" class="text-sm text-white/90 space-y-1"></div>
-                                        <p class="text-xs text-amber-400/90 border-l-2 border-amber-400/50 pl-3 mt-3">After payment, please send the <strong>screenshot</strong> and <strong>Order ID</strong> to this number. Otherwise, your order will not be confirmed.</p>
-                                    </div>
-                                    <input type="hidden" id="checkoutPaymentMethod" value="cod">
+                                <div id="paymentAccountDetails" class="hidden mt-4 p-4 bg-black/30 border border-[var(--accent-cyan)]/30 rounded-xl space-y-3">
+                                    <div id="paymentAccountContent" class="text-xs text-white/90 space-y-1"></div>
                                 </div>
+                                <input type="hidden" id="checkoutPaymentMethod" value="cod">
+                            </div>
 
-                                <button type="submit" class="w-full py-5 bg-[var(--accent-cyan)] text-black font-black uppercase tracking-[0.2em] rounded-full hover:bg-[var(--accent-teal)] transition-all shadow-[0_0_30px_rgba(6,182,212,0.3)] hover:shadow-[0_0_50px_rgba(6,182,212,0.5)] mt-8">
-                                    PURCHASE • RS.${total}
-                                </button>
-                            </form>
-                        </div>
+                            <button type="submit" class="w-full py-5 bg-[var(--accent-cyan)] text-black font-black uppercase tracking-[0.2em] rounded-full hover:bg-[var(--accent-teal)] transition-all shadow-[0_0_30px_rgba(6,182,212,0.3)] mt-4">
+                                PURCHASE • RS.${total}
+                            </button>
+                        </form>
+                    </div>
 
-                        <!-- Right: Summary -->
-                        <div class="w-full md:w-[400px] bg-white/5 border-l border-white/10 p-8 md:p-12 relative overflow-hidden">
-                            <div class="absolute inset-0 bg-[url('${product.image}')] bg-cover bg-center opacity-10 blur-3xl"></div>
-                            <div class="relative z-10">
-                                <div class="flex items-start gap-6 mb-8">
-                                    <div class="w-24 h-32 rounded-2xl overflow-hidden bg-black/20 border border-white/10 relative">
-                                        <img src="${product.image}" class="w-full h-full object-cover">
-                                        <span class="absolute -top-2 -right-2 w-6 h-6 bg-[var(--accent-cyan)] text-black text-[10px] font-bold flex items-center justify-center rounded-full shadow-lg">${quantity}</span>
+                    <div class="w-full md:w-[400px] bg-white/5 border-t md:border-t-0 md:border-l border-white/10 p-5 md:p-12 relative md:overflow-y-auto custom-scrollbar">
+                        <div class="relative z-10 space-y-8">
+                            ${items.map(item => `
+                                <div class="flex items-start gap-4 bg-white/5 p-4 rounded-2xl">
+                                    <div class="w-16 h-20 rounded-xl overflow-hidden bg-black/20 border border-white/10 relative flex-shrink-0">
+                                        <img src="${item.product.image || item.product.mainImage}" class="w-full h-full object-cover">
+                                        <span class="absolute -top-1 -right-1 w-5 h-5 bg-[var(--accent-cyan)] text-black text-[10px] font-black flex items-center justify-center rounded-full shadow-lg">${item.quantity}</span>
                                     </div>
-                                    <div>
-										<h3 class="text-lg font-black text-white uppercase leading-tight mb-2">${product.name}</h3>
-										<p class="text-xs font-bold text-white/40 uppercase tracking-widest mb-1">${product.category} ${product.isSale ? '• <span class="text-red-500">SALE</span>' : ''}</p>
-										<p class="text-xl font-bold text-[var(--accent-cyan)]">RS.${product.price * quantity}</p>
-									</div>
-                                </div>
-
-                                <div class="space-y-4 border-t border-white/10 pt-8">
-                                    <div class="flex justify-between text-sm">
-                                        <span class="text-white/60">Subtotal</span>
-                                        <span class="text-white font-bold">RS.${subtotal}</span>
-                                    </div>
-                                    <div class="flex justify-between text-sm">
-                                        <span class="text-white/60">Shipping</span>
-                                        <span class="text-white font-bold">${shippingLabel}</span>
+                                    <div class="flex-1">
+                                        <h3 class="text-xs font-black text-white uppercase leading-tight mb-1">${item.product.name}</h3>
+                                        <p class="text-[8px] font-black text-white/30 uppercase tracking-[0.2em] mb-1">
+                                            ${this.state.selectedSizes[item.product.id] || ''} 
+                                            ${this.state.selectedColors[item.product.id] ? '• ' + this.state.selectedColors[item.product.id] : ''}
+                                        </p>
+                                        <p class="text-sm font-black text-[var(--accent-cyan)]">RS.${item.price * item.quantity}</p>
                                     </div>
                                 </div>
-                                
-                                <!-- Discount Code -->
-                                <div class="mt-6 pt-6 border-t border-white/10">
+                            `).join('')}
+
+                            <div class="space-y-3 pt-6 border-t border-white/10">
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-white/60">Subtotal</span>
+                                    <span class="text-white font-bold">RS.${subtotal}</span>
+                                </div>
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-white/60">Shipping</span>
+                                    <span class="text-white font-bold">${shippingLabel}</span>
+                                </div>
+                                <div class="pt-4 border-t border-white/10">
                                     <div class="flex gap-2">
-                                        <input id="discountCodeInput" type="text" placeholder="Discount Code" class="flex-1 bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-[var(--accent-cyan)] text-sm transition-colors" style="text-transform:uppercase">
-                                        <button type="button" onclick="AMAZE.applyDiscount()" class="px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-bold uppercase text-[10px] rounded-lg transition-colors border border-white/10">Apply</button>
+                                        <input id="discountCodeInput" type="text" placeholder="Promo Code" class="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-white placeholder-white/20 text-xs focus:outline-none focus:border-[var(--accent-cyan)] uppercase">
+                                        <button type="button" onclick="AMAZE.applyDiscount()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-bold uppercase text-[9px] rounded-lg transition-all border border-white/10">Apply</button>
                                     </div>
-                                    <p id="discountMsg" class="text-[10px] mt-2 hidden"></p>
+                                    <p id="discountMsg" class="text-[9px] mt-2 hidden"></p>
                                 </div>
-
-                                <div class="flex justify-between items-end border-t border-white/10 pt-8 mt-8">
-                                    <span class="text-white/60 text-sm">Total</span>
+                                <div class="flex justify-between items-end pt-6">
+                                    <span class="text-white/60 text-xs">Total Due</span>
                                     <div class="text-right">
-                                        <span class="block text-xs text-white/40 mb-1">PKR</span>
-                                        <span id="checkoutTotalDisplay" class="text-3xl font-black text-white">RS.${total}</span>
+                                        <span id="checkoutTotalDisplay" class="text-2xl font-black text-white tracking-tighter">RS.${total}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            </div>
+        `;
 
-            // Re-cache DOM to include new modal elements
-            this.dom.checkoutModal = document.getElementById('checkoutModal');
-            this.dom.checkoutOverlay = document.getElementById('checkoutOverlay');
-            this.dom.closeCheckout = document.getElementById('closeCheckout');
-            this.dom.checkoutPanel = document.getElementById('checkoutPanel');
+        document.getElementById('checkoutModal').insertAdjacentHTML('beforeend', modalHtml);
 
-            // Bind Close Event
-            this.dom.closeCheckout.addEventListener('click', () => this.toggleCheckout(false));
-            this.dom.checkoutOverlay.addEventListener('click', () => this.toggleCheckout(false));
-        } else {
-            // If modal exists, just update the content (simplified re-render for now)
-            document.getElementById('checkoutModal').remove();
-            this.renderCheckoutModal(product, quantity);
-            return;
-        }
+        this.dom.checkoutModal = document.getElementById('checkoutModal');
+        this.dom.checkoutOverlay = document.getElementById('checkoutOverlay');
+        this.dom.checkoutPanel = document.getElementById('checkoutPanel');
+        this.dom.closeCheckout = document.getElementById('closeCheckout');
+
+        this.dom.closeCheckout?.addEventListener('click', () => this.toggleCheckout(false));
+        this.dom.checkoutOverlay?.addEventListener('click', () => this.toggleCheckout(false));
 
         this.toggleCheckout(true);
     },
 
     toggleCheckout(show) {
+        if (!this.dom.checkoutModal || !this.dom.checkoutOverlay || !this.dom.checkoutPanel) {
+            this.dom.checkoutModal = document.getElementById('checkoutModal');
+            this.dom.checkoutOverlay = document.getElementById('checkoutOverlay');
+            this.dom.checkoutPanel = document.getElementById('checkoutPanel');
+        }
+        if (!this.dom.checkoutModal) return;
+
         if (show) {
             this.dom.checkoutModal.classList.remove('hidden');
-            // Animate In
             setTimeout(() => {
-                this.dom.checkoutOverlay.classList.remove('opacity-0');
-                this.dom.checkoutPanel.classList.remove('scale-95', 'opacity-0');
-                this.dom.checkoutPanel.classList.add('scale-100', 'opacity-100');
+                this.dom.checkoutOverlay?.classList.remove('opacity-0');
+                this.dom.checkoutPanel?.classList.remove('scale-95', 'opacity-0');
+                this.dom.checkoutPanel?.classList.add('scale-100', 'opacity-100');
             }, 10);
         } else {
-            // Animate Out
-            this.dom.checkoutPanel.classList.remove('scale-100', 'opacity-100');
-            this.dom.checkoutPanel.classList.add('scale-95', 'opacity-0');
-            this.dom.checkoutOverlay.classList.add('opacity-0');
-
+            this.dom.checkoutPanel?.classList.remove('scale-100', 'opacity-100');
+            this.dom.checkoutPanel?.classList.add('scale-95', 'opacity-0');
+            this.dom.checkoutOverlay?.classList.add('opacity-0');
             setTimeout(() => {
                 this.dom.checkoutModal.classList.add('hidden');
             }, 500);
@@ -2048,8 +2258,8 @@ const AMAZE = {
         const code = codeInput.value.trim().toUpperCase();
         if (!code) return;
 
-        const { product, quantity } = this.state.lastCheckout || {};
-        const subtotal = product.price * quantity;
+        const items = this.state.lastCheckoutItems || [];
+        const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
         const shipping = subtotal >= 5000 ? 0 : 250;
         const baseTotal = subtotal + shipping;
 
@@ -2066,7 +2276,7 @@ const AMAZE = {
                 discount = Math.min(promo.discountValue, baseTotal);
             }
 
-            const discountedTotal = baseTotal - discount;
+            const discountedTotal = Math.max(0, baseTotal - discount);
             this.state.activeDiscount = { code, discount, discountedTotal };
 
             msgEl.textContent = `✓ Code applied! You save RS.${discount} (${promo.discountType === 'Percentage' ? promo.discountValue + '%' : 'RS.' + promo.discountValue} off)`;
@@ -2087,8 +2297,9 @@ const AMAZE = {
     async processPayment() {
         const btn = document.querySelector('#checkoutPanel button[type="submit"]');
         const form = document.querySelector('#checkoutPanel form');
-        const { product, quantity } = this.state.lastCheckout || {};
-        if (!form || !product) {
+        const items = this.state.lastCheckoutItems || [];
+
+        if (!form || items.length === 0) {
             this.notify("Checkout data missing. Please try again.", "info");
             return;
         }
@@ -2103,10 +2314,9 @@ const AMAZE = {
         const paymentMethodEl = document.getElementById('checkoutPaymentMethod');
         const paymentMethod = paymentMethodEl ? paymentMethodEl.value : 'cod';
 
-        const subtotal = product.price * quantity;
+        const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
         const shipping = subtotal >= 5000 ? 0 : 250;
         const baseTotal = subtotal + shipping;
-        // Use discounted total if a promo code was applied
         const total = (this.state.activeDiscount && this.state.activeDiscount.discountedTotal != null)
             ? this.state.activeDiscount.discountedTotal
             : baseTotal;
@@ -2116,42 +2326,38 @@ const AMAZE = {
         btn.disabled = true;
 
         try {
-            // Only use product.id if it's a valid MongoDB ObjectId (24-char hex string)
-            const isValidObjectId = typeof product.id === 'string' && /^[a-f\d]{24}$/i.test(product.id);
-            const orderItems = [{
-                name: product.name,
-                qty: quantity,
-                image: product.image,
-                price: product.price,
-                ...(isValidObjectId && { product: product.id })
-            }];
+            const orderItems = items.map(item => {
+                const p = item.product;
+                const isValidObjectId = typeof p.id === 'string' && /^[a-f\d]{24}$/i.test(p.id);
+                return {
+                    name: p.name,
+                    qty: item.quantity,
+                    image: p.image || p.mainImage,
+                    price: item.price,
+                    size: this.state.selectedSizes[p.id] || '',
+                    color: this.state.selectedColors[p.id] || '',
+                    ...(isValidObjectId && { product: p.id })
+                };
+            });
 
             const shippingAddress = {
                 address: address,
                 city: city,
                 postalCode: postalCode,
-                country: 'Pakistan' // Default
-            };
-
-            const customerInfo = {
-                firstName,
-                lastName,
-                email,
-                phone
+                country: 'Pakistan'
             };
 
             const response = await API.post('/orders', {
                 orderItems,
                 shippingAddress,
-                customerInfo,
+                customerInfo: { firstName, lastName, email, phone },
                 paymentMethod,
                 totalAmount: total
             });
 
             this.toggleCheckout(false);
 
-            // Prepare Receipt Data
-            const receiptData = {
+            this.showOrderReceipt({
                 orderId: response.orderId,
                 orderDate,
                 firstName,
@@ -2161,24 +2367,24 @@ const AMAZE = {
                 address,
                 city,
                 postalCode,
-                product,
-                quantity,
+                items: orderItems,
                 subtotal,
                 shipping,
                 total,
                 paymentMethod
-            };
+            });
 
-            this.showOrderReceipt(receiptData);
             this.notify("Order Secured. Thank you.", "success");
+            this.state.cart = [];
+            this.saveCart();
+            this.updateCart();
 
-            // Sync products after purchase to update stock
             await this.fetchInitialData();
             this.renderProducts();
 
         } catch (err) {
             console.error('Order Transmission Failed:', err);
-            this.notify(err.message || "Order Acquisition Failed. Please check connectivity.", "error");
+            this.notify(err.message || "Order Acquisition Failed.", "error");
         } finally {
             btn.disabled = false;
             btn.innerHTML = `PURCHASE • RS.${total}`;
@@ -2193,69 +2399,65 @@ const AMAZE = {
         const receiptHtml = `
             <div id="receiptModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
                 <div class="absolute inset-0 bg-black/90 backdrop-blur-md" onclick="AMAZE.closeReceipt()"></div>
-                <div class="relative w-full max-w-lg bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-cyan-500/10 print:shadow-none">
-                    <div class="bg-gradient-to-r from-[var(--accent-cyan)]/20 to-transparent border-b border-white/10 px-6 py-4">
+                <div class="relative w-full max-w-lg bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+                    <div class="bg-gradient-to-r from-[var(--accent-cyan)]/20 to-transparent border-b border-white/10 px-6 py-4 flex-shrink-0">
                         <div class="flex items-center justify-between">
                             <h2 class="text-xl font-black text-white uppercase tracking-tight">Order Receipt</h2>
-                            <button type="button" onclick="AMAZE.closeReceipt()" class="text-white/50 hover:text-white p-2 -m-2 focus:outline-none print:hidden"><i class="fas fa-times"></i></button>
+                            <button type="button" onclick="AMAZE.closeReceipt()" class="text-white/50 hover:text-white p-2 -m-2 print:hidden"><i class="fas fa-times"></i></button>
                         </div>
                         <p class="text-[var(--accent-cyan)] text-[10px] font-bold uppercase tracking-widest mt-1">Order ID: ${data.orderId}</p>
                         <p class="text-white/50 text-xs mt-0.5">${data.orderDate}</p>
                     </div>
-                    <div class="p-6 space-y-5 text-sm">
-                        <div>
-                            <h3 class="text-[10px] font-black uppercase tracking-widest text-white/40 mb-2">Customer</h3>
-                            <p class="text-white font-medium">${data.firstName} ${data.lastName}</p>
-                            <p class="text-white/70">${data.email}</p>
-                            ${data.phone ? `<p class="text-white/60 text-xs mt-1">Mobile: ${data.phone}</p>` : ''}
-                        </div>
-                        <div>
-                            <h3 class="text-[10px] font-black uppercase tracking-widest text-white/40 mb-2">Delivery Address</h3>
-                            <p class="text-white/90">${data.address}</p>
-                            <p class="text-white/90">${data.city}${data.postalCode ? ', ' + data.postalCode : ''}</p>
-                        </div>
-                        <div>
-                            <h3 class="text-[10px] font-black uppercase tracking-widest text-white/40 mb-2">Items</h3>
-                            <div class="flex gap-4 py-3 border-y border-white/10">
-                                <img src="${data.product.image}" alt="" class="w-16 h-20 object-cover rounded-lg bg-white/5">
-                                <div class="flex-1 min-w-0">
-                                    <p class="font-bold text-white uppercase">${data.product.name}</p>
-                                    <p class="text-white/50 text-xs">Qty: ${data.quantity} × RS.${data.product.price}</p>
-                                    <p class="text-[var(--accent-cyan)] font-bold mt-1">RS.${data.subtotal}</p>
-                                </div>
+                    <div class="p-6 space-y-6 overflow-y-auto custom-scrollbar">
+                        <div class="grid grid-cols-2 gap-6 text-xs">
+                            <div>
+                                <h3 class="text-[10px] font-black uppercase tracking-widest text-white/40 mb-2">Customer</h3>
+                                <p class="text-white font-medium">${data.firstName} ${data.lastName}</p>
+                                <p class="text-white/70">${data.email}</p>
+                                ${data.phone ? `<p class="text-white/50 mt-1">${data.phone}</p>` : ''}
+                            </div>
+                            <div>
+                                <h3 class="text-[10px] font-black uppercase tracking-widest text-white/40 mb-2">Address</h3>
+                                <p class="text-white/90">${data.address}</p>
+                                <p class="text-white/90">${data.city}${data.postalCode ? ', ' + data.postalCode : ''}</p>
                             </div>
                         </div>
-                        <div class="space-y-1 pt-2">
-                            <div class="flex justify-between text-white/70"><span>Subtotal</span><span>RS.${data.subtotal}</span></div>
-                            <div class="flex justify-between text-white/70"><span>Shipping</span><span>${data.shipping === 0 ? 'Free (Order ≥ 5000)' : 'Rs. 250'}</span></div>
-                            <div class="flex justify-between text-white font-bold pt-2 border-t border-white/10"><span>Total</span><span class="text-[var(--accent-cyan)]">RS.${data.total}</span></div>
+                        <div>
+                            <h3 class="text-[10px] font-black uppercase tracking-widest text-white/40 mb-3">Items</h3>
+                            <div class="space-y-4">
+                                ${data.items.map(item => `
+                                    <div class="flex gap-4 py-3 border-b border-white/5 last:border-0">
+                                        <img src="${item.image}" alt="" class="w-12 h-16 object-cover rounded bg-white/5">
+                                        <div class="flex-1 min-w-0">
+                                            <p class="font-bold text-white uppercase text-[11px] leading-tight">${item.name}</p>
+                                            <p class="text-white/50 text-[10px] mt-0.5">Qty: ${item.qty} × RS.${item.price}</p>
+                                            ${(item.size || item.color) ? `<p class="text-white/30 text-[9px] uppercase font-bold mt-1">${item.size ? 'Size: ' + item.size : ''} ${item.color ? ' • ' + item.color : ''}</p>` : ''}
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-white font-bold text-[11px]">RS.${item.price * item.qty}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="space-y-2 pt-2 border-t border-white/10">
+                            <div class="flex justify-between text-xs text-white/60"><span>Subtotal</span><span>RS.${data.subtotal}</span></div>
+                            <div class="flex justify-between text-xs text-white/60"><span>Shipping</span><span>${data.shipping === 0 ? 'Free' : 'RS.' + data.shipping}</span></div>
+                            <div class="flex justify-between text-white font-black pt-3 border-t border-white/10 text-lg"><span>Total</span><span class="text-[var(--accent-cyan)]">RS.${data.total}</span></div>
                         </div>
                         <div>
                             <h3 class="text-[10px] font-black uppercase tracking-widest text-white/40 mb-1">Payment</h3>
-                            <p class="text-white font-medium">${paymentLabel}</p>
+                            <p class="text-white font-medium text-xs">${paymentLabel}</p>
                         </div>
                     </div>
-                    <div class="px-6 py-4 bg-white/5 border-t border-white/10 flex gap-3 print:border-t print:bg-transparent">
-                        <button type="button" onclick="window.print();" class="flex-1 py-3 bg-white/10 hover:bg-white/20 text-white font-bold uppercase text-[10px] tracking-widest rounded-xl border border-white/10 transition-colors print:hidden">Print Receipt</button>
-                        <button type="button" onclick="AMAZE.closeReceipt()" class="flex-1 py-3 bg-[var(--accent-cyan)] hover:bg-[var(--accent-teal)] text-black font-bold uppercase text-[10px] tracking-widest rounded-xl transition-colors print:hidden">Done</button>
+                    <div class="px-6 py-4 bg-white/5 border-t border-white/10 flex gap-3 flex-shrink-0 print:hidden">
+                        <button type="button" onclick="window.print();" class="flex-1 py-3 bg-white/10 hover:bg-white/20 text-white font-bold uppercase text-[10px] tracking-widest rounded-xl border border-white/10 transition-colors">Print</button>
+                        <button type="button" onclick="AMAZE.closeReceipt()" class="flex-1 py-3 bg-[var(--accent-cyan)] hover:bg-[var(--accent-teal)] text-black font-bold uppercase text-[10px] tracking-widest rounded-xl transition-colors">Close</button>
                     </div>
                 </div>
             </div>
         `;
         document.body.insertAdjacentHTML('beforeend', receiptHtml);
-
-        // Ensure the custom cursor continues tracking inside the modal overlay
-        const receiptModal = document.getElementById('receiptModal');
-        if (receiptModal) {
-            receiptModal.addEventListener('mousemove', (e) => this.handleCursorMove(e));
-        }
-
-        // Move cursor elements to the very end of the body
-        // so they render on top of the newly injected modal
-        const cursorEl = document.getElementById('cursor');
-        const followerEl = document.getElementById('cursorFollower');
-        if (cursorEl) document.body.appendChild(cursorEl);
-        if (followerEl) document.body.appendChild(followerEl);
     },
 
     closeReceipt() {
@@ -2331,7 +2533,7 @@ const AMAZE = {
         });
     },
 
-    subscribeNewsletter() {
+    async subscribeNewsletter() {
         const input = document.getElementById('newsletterInput');
         const email = input.value;
         const form = input.closest('form');
@@ -2347,7 +2549,8 @@ const AMAZE = {
         btn.disabled = true;
         btn.classList.add('opacity-50');
 
-        setTimeout(() => {
+        try {
+            await API.post('/subscribers', { email });
             // Success State
             section.querySelector('.scroll-reveal').innerHTML = `
                 <div class="animate-reveal-up">
@@ -2364,7 +2567,13 @@ const AMAZE = {
 
             // Notify pulse
             this.notify("Newsletter Protocol: White-listed successfully.", "success");
-        }, 1500);
+        } catch (err) {
+            console.error('Newsletter Protocol Failure:', err);
+            this.notify(err.message || "Transmission Interrupted.", "error");
+            btn.innerText = originalText;
+            btn.disabled = false;
+            btn.classList.remove('opacity-50');
+        }
     },
 
     async handleContact(e) {

@@ -5,8 +5,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="THE AMAZE Fashion 2026 - The ultimate immersive e-commerce showroom. Discover digital sculptures and advanced textile engineering.">
-    <title>THE AMAZE Fashion | 2026 Global Showroom</title>
+        content="THE AMAZE - Premium Global Fashion & Luxury Clothing Showroom 2026. Discover elite technical garments, digital sculptures, and advanced textile engineering.">
+    <meta name="keywords"
+        content="THE AMAZE, The Amaze Fashion, Premium Clothing, Luxury Streetwear, Technical Textiles, 2026 Fashion Archive, Designer Cloth, Elite Apparel">
+    <meta name="author" content="THE AMAZE PROTOCOL">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://theamaze.com/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://theamaze.com/">
+    <meta property="og:title" content="THE AMAZE Fashion | 2026 Global Showroom">
+    <meta property="og:description"
+        content="Immersive luxury fashion showroom. Discover the future of textile engineering and digital sculptures.">
+    <meta property="og:image" content="https://theamaze.com/ChatGPT%20Image%20Feb%2015,%202026,%2010_04_22%20PM.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://theamaze.com/">
+    <meta property="twitter:title" content="THE AMAZE Fashion | 2026 Global Showroom">
+    <meta property="twitter:description"
+        content="Immersive luxury fashion showroom. Discover the future of textile engineering and digital sculptures.">
+    <meta property="twitter:image"
+        content="https://theamaze.com/ChatGPT%20Image%20Feb%2015,%202026,%2010_04_22%20PM.png">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "THE AMAZE",
+      "url": "https://theamaze.com",
+      "logo": "https://theamaze.com/ChatGPT%20Image%20Feb%2015,%202026,%2010_04_22%20PM.png",
+      "description": "Premium 2026 Fashion Showroom focusing on technical textiles and digital sculptures.",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+1-888-AMAZE-26",
+        "contactType": "customer service",
+        "email": "officialtheamaze@gmail.com"
+      },
+      "sameAs": [
+        "https://instagram.com/theamaze",
+        "https://twitter.com/theamaze"
+      ]
+    }
+    </script>
+
+    <title>THE AMAZE Fashion | Premium Luxury Clothing 2026</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -326,7 +372,7 @@
         .menu-link {
             position: relative;
             display: inline-block;
-            overflow: hidden;
+            padding-bottom: 5px;
         }
 
         .menu-link::after {
@@ -478,6 +524,13 @@
 
             <!-- Right: Actions -->
             <div class="flex items-center gap-3 md:gap-6">
+                <!-- Search Trigger -->
+                <button id="searchBtn" class="flex items-center gap-2 opacity-70 hover:opacity-100 transition-all group"
+                    title="Search Protocol">
+                    <i
+                        class="fas fa-search text-white group-hover:text-[var(--accent-cyan)] transition-colors text-sm md:text-base"></i>
+                </button>
+
                 <!-- Favorites Trigger -->
                 <button id="favBtn" class="flex items-center gap-2 opacity-70 hover:opacity-100 transition-all group">
                     <i
@@ -508,35 +561,58 @@
             class="absolute inset-0 bg-black/95 backdrop-blur-3xl opacity-0 transition-opacity duration-500 pointer-events-none">
         </div>
         <div
-            class="absolute left-0 top-0 h-full w-full max-w-xl bg-[#050505] border-r border-white/5 p-16 flex flex-col pointer-events-auto">
-            <div class="flex justify-between items-center mb-24">
-                <span class="text-[10px] font-black tracking-[0.5em] uppercase text-white/20">Navigation Protocol</span>
+            class="absolute left-0 top-0 h-full w-full max-w-[900px] bg-[#050505] border-r border-white/5 p-8 md:p-16 flex flex-col pointer-events-auto">
+            <div class="flex justify-between items-center mb-16 md:mb-24">
+                <span class="text-[10px] font-black tracking-[0.5em] uppercase text-white/20">Menu Interface</span>
                 <button id="closeMenu" class="text-white/20 hover:text-white transition-colors">
                     <i class="fas fa-times text-2xl"></i>
                 </button>
             </div>
 
-            <ul class="flex-1 space-y-8 md:space-y-12">
-                <li>
-                    <a href="index.html#home"
-                        class="menu-link text-4xl md:text-6xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase">Vision.</a>
-                </li>
-                <li>
-                    <a href="about.html"
-                        class="menu-link text-4xl md:text-6xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase">About.</a>
-                </li>
-                <li>
-                    <a href="archive.html"
-                        class="menu-link text-4xl md:text-6xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase">Archive.</a>
-                </li>
-                <li>
-                    <a href="contact.html"
-                        class="menu-link text-4xl md:text-6xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase">Contact.</a>
-                </li>
-            </ul>
+            <div
+                class="flex flex-1 flex-col md:flex-row items-start gap-8 md:gap-20 overflow-y-auto overflow-x-hidden md:overflow-hidden w-full custom-scrollbar pb-10">
+                <div class="w-full xl:w-1/2 flex-shrink-0">
+                    <span
+                        class="text-[9px] font-black tracking-[0.5em] uppercase text-white/20 mb-8 block md:hidden">Navigation
+                        Section</span>
+                    <ul class="space-y-4 md:space-y-10">
+                        <li>
+                            <a href="index.html#home"
+                                class="menu-link text-2xl md:text-5xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase leading-tight">Home.</a>
+                        </li>
+                        <li>
+                            <a href="about.html"
+                                class="menu-link text-2xl md:text-5xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase leading-tight">About.</a>
+                        </li>
+                        <li>
+                            <a href="archive.html"
+                                class="menu-link text-2xl md:text-5xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase leading-tight">Product.</a>
+                        </li>
+                        <li>
+                            <a href="contact.html"
+                                class="menu-link text-2xl md:text-5xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase leading-tight">Contact.</a>
+                        </li>
+                    </ul>
+                </div>
 
-            <div class="mt-20 pt-12 border-t border-white/5">
-                <p class="text-[9px] font-black uppercase tracking-[0.4em] text-white/20">The Amaze Architecture v.2026
+                <!-- Divider (Desktop) -->
+                <div class="hidden md:block w-px h-[60%] bg-white/5 self-center min-h-[300px]"></div>
+
+                <!-- Right: Categories / Curation -->
+                <div class="w-full md:w-80 flex flex-col mb-10 md:mb-0">
+                    <span
+                        class="text-[10px] font-black tracking-[0.5em] uppercase text-white/20 mb-4 md:mb-8 block mt-4 md:mt-0 flex-shrink-0 border-t border-white/5 pt-8 md:border-none md:pt-0">Categories
+                        Curation</span>
+                    <div class="w-full md:flex-1 md:overflow-y-auto md:custom-scrollbar md:pr-4">
+                        <ul id="menuCategories" class="space-y-4 md:space-y-5">
+                            <!-- Categories are dynamically injected here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 pt-12 border-t border-white/5">
+                <p class="text-[9px] font-black uppercase tracking-[0.4em] text-white/20">The Amaze Collection v.2026
                 </p>
             </div>
         </div>
@@ -560,7 +636,7 @@
             class="max-w-[1700px] mx-auto px-6 w-full relative z-10 grid lg:grid-cols-12 gap-12 lg:gap-10 items-center">
             <div class="lg:col-span-7 pt-12 lg:pt-20 text-center lg:text-left">
                 <div class="mb-4 md:mb-6 animate-reveal-up" style="animation-delay: 0.1s;">
-                    <span class="section-label">2026 Archive v.01</span>
+                    <span class="section-label">2026 Product v.01</span>
                 </div>
                 <div class="mb-8 md:mb-10 animate-reveal-up" style="animation-delay: 0.3s;">
                     <h2
@@ -579,9 +655,9 @@
                 </div>
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 md:gap-8 animate-reveal-up"
                     style="animation-delay: 0.7s;">
-                    <a href="#products"
+                    <a href="archive.html"
                         class="group relative px-10 py-5 md:px-16 md:py-7 bg-white text-black font-black uppercase text-[10px] md:text-xs tracking-widest rounded-full overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(255,255,255,0.1)] w-full sm:w-auto text-center">
-                        <span class="relative z-10">Purchase the future</span>
+                        <span class="relative z-10">Shop Now</span>
                         <div
                             class="absolute inset-0 bg-[var(--accent-cyan)] translate-y-full group-hover:translate-y-0 transition-transform duration-500">
                         </div>
@@ -589,7 +665,8 @@
                 </div>
             </div>
 
-            <div class="lg:col-span-5 relative mt-6 lg:mt-0 animate-reveal-up" style="animation-delay: 0.9s;">
+            <div id="heroFeaturedCard" class="hidden lg:col-span-5 relative mt-6 lg:mt-0 animate-reveal-up"
+                style="animation-delay: 0.9s;">
                 <div
                     class="relative group p-4 md:p-6 glass-panel rounded-[2rem] md:rounded-[3.5rem] bg-white/[0.02] border-white/10 hover:border-[var(--accent-cyan)]/30 transition-all duration-700 shadow-2xl shadow-black/50">
                     <div class="grid grid-cols-12 gap-6 md:gap-8 items-center">
@@ -634,9 +711,9 @@
                             <div
                                 class="flex items-end justify-center lg:justify-start space-x-4 md:space-x-6 mb-8 md:mb-10">
                                 <span id="heroFeaturedPrice"
-                                    class="text-3xl md:text-5xl font-black text-white tracking-tighter">RS.${featuredProduct.price}</span>
+                                    class="text-3xl md:text-5xl font-black text-white tracking-tighter">RS. ---</span>
                                 <span id="heroFeaturedOriginal"
-                                    class="text-xs md:text-sm text-white/20 line-through mb-1">RS.${featuredProduct.original}</span>
+                                    class="text-xs md:text-sm text-white/20 line-through mb-1">RS. ---</span>
                             </div>
 
                             <div class="grid grid-cols-2 gap-3 md:gap-4">
@@ -664,12 +741,12 @@
 
     <!-- NEW: Vanguard Spotlight (Immersive Showreel) -->
     <section id="spotlight"
-        class="py-60 px-6 relative overflow-hidden bg-gradient-to-b from-transparent to-[rgba(6,182,212,0.03)] border-t border-white/5">
+        class="py-32 px-6 relative overflow-hidden bg-gradient-to-b from-transparent to-[rgba(6,182,212,0.03)] border-t border-white/5">
         <div class="max-w-[1700px] mx-auto">
-            <div class="text-center mb-40 scroll-reveal">
+            <div class="text-center mb-20 scroll-reveal">
                 <span class="section-label mx-auto">Vanguard Series</span>
                 <h2 class="text-[6vw] font-black tracking-tighter text-white mb-6 uppercase">
-                    Protocol <span class="text-[var(--accent-cyan)] font-playfair italic">Spotlight.</span>
+                    NEW <span class="text-[var(--accent-cyan)] font-playfair italic">COLLECTION.</span>
                 </h2>
                 <p class="text-white/40 font-light tracking-[0.4em] text-[10px] uppercase">Architecting the future of
                     technical materiality</p>
@@ -697,7 +774,7 @@
 
     <!-- NEW: Technical Materiality (Engineering Showcase) -->
     <section id="engineering"
-        class="py-60 px-6 relative overflow-hidden bg-gradient-to-b from-transparent to-[rgba(20,184,166,0.03)] border-t border-white/5">
+        class="py-32 px-6 relative overflow-hidden bg-gradient-to-b from-transparent to-[rgba(20,184,166,0.03)] border-t border-white/5">
         <div class="max-w-[1700px] mx-auto grid lg:grid-cols-2 gap-40 items-center">
             <div class="order-2 lg:order-1 relative">
                 <div class="grid grid-cols-2 gap-4 md:gap-8 scroll-reveal">
@@ -798,9 +875,9 @@
                         </div>
                     </div>
 
-                    <a href="#products"
+                    <a href="archive.html"
                         class="inline-block px-12 py-6 bg-[var(--accent-cyan)] text-black font-black uppercase text-xs tracking-widest rounded-full hover:bg-[var(--accent-teal)] transition-all shadow-[0_0_50px_rgba(6,182,212,0.3)]">
-                        Access Sale Archive
+                        All Products
                     </a>
                 </div>
 
@@ -814,26 +891,31 @@
 
     <!-- Bento Categories -->
     <section id="categories"
-        class="py-40 px-6 bg-gradient-to-b from-transparent to-[rgba(6,182,212,0.03)] border-t border-white/5">
+        class="py-20 px-6 bg-gradient-to-b from-transparent to-[rgba(6,182,212,0.03)] border-t border-white/5">
         <div class="max-w-[1600px] mx-auto">
-            <div class="mb-24 px-6 text-center lg:text-left">
-                <span class="section-label lg:mx-0 mx-auto">Curated Tiers</span>
+            <div class="mb-12 px-6 text-center lg:text-left">
+                <a href="archive.html"
+                    class="section-label lg:mx-0 mx-auto hover:text-white transition-colors cursor-pointer group flex items-center justify-center lg:justify-start gap-3">
+                    ALL CATEGORIES
+                    <i
+                        class="fas fa-chevron-right text-[7px] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>
+                </a>
                 <h2 class="text-5xl md:text-8xl font-black tracking-tighter text-white uppercase">The Pulse.</h2>
             </div>
 
-            <div id="categoriesContainer" class="bento-grid h-auto lg:h-[800px] px-6">
+            <div id="categoriesContainer" class="bento-grid h-auto lg:min-h-[600px] px-6">
                 <!-- Dynamically populated by script.js -->
             </div>
         </div>
     </section>
 
     <!-- NEW: MUSE ARCHIVE (Global Influence) -->
-    <section id="muse" class="py-60 px-6 bg-[rgba(6,182,212,0.01)]">
+    <section id="muse" class="py-32 px-6 bg-[rgba(6,182,212,0.01)]">
         <div class="max-w-[1700px] mx-auto">
-            <div class="text-center mb-40 scroll-reveal">
+            <div class="text-center mb-20 scroll-reveal">
                 <span class="section-label mx-auto">Social Proof</span>
                 <h2 class="text-5xl md:text-7xl font-black tracking-tighter text-white uppercase mb-8">The Muse
-                    <br><span class="text-[var(--accent-cyan)]">Archive.</span>
+                    <br><span class="text-[var(--accent-cyan)]">Product.</span>
                 </h2>
             </div>
 
@@ -883,20 +965,20 @@
     </section>
 
     <!-- Product Archive -->
-    <section id="products" class="py-40 px-6">
+    <section id="products" class="py-24 px-6">
         <div class="max-w-[1700px] mx-auto">
             <div
-                class="flex flex-col lg:flex-row justify-between items-center lg:items-end mb-24 md:mb-32 border-b border-white/5 pb-16 text-center lg:text-left">
+                class="flex flex-col lg:flex-row justify-between items-center lg:items-end mb-16 md:mb-20 border-b border-white/5 pb-16 text-center lg:text-left">
                 <div>
                     <span class="section-label lg:mx-0 mx-auto">Inventory</span>
                     <h2 class="text-5xl md:text-7xl font-black tracking-tighter text-white uppercase">Ready For
-                        <br>Deployment.
+                        <br>The Season.
                     </h2>
                 </div>
                 <div class="flex space-x-12 mt-6 md:mt-0">
                     <a href="archive.html"
                         class="text-[10px] font-black uppercase tracking-[0.5em] text-[var(--accent-cyan)] border-b border-[var(--accent-cyan)] pb-2">Full
-                        Archive Access</a>
+                        Product Access</a>
                 </div>
             </div>
 
@@ -907,7 +989,7 @@
     </section>
 
     <!-- NEW: Global Trust Protocol (Trust & Authority) -->
-    <section id="trust" class="py-40 px-6 border-t border-b border-white/5 bg-transparent relative overflow-hidden">
+    <section id="trust" class="py-24 px-6 border-t border-b border-white/5 bg-transparent relative overflow-hidden">
         <div class="max-w-[1700px] mx-auto">
             <div class="text-center mb-24 scroll-reveal">
                 <span class="section-label mx-auto">Reliability Protocol</span>
@@ -939,7 +1021,7 @@
                         class="bg-transparent border-none outline-none flex-1 px-8 py-4 md:py-0 text-xs font-bold tracking-widest text-white placeholder:text-white/20 w-full text-center md:text-left">
                     <button type="submit"
                         class="w-full md:w-auto px-12 py-5 bg-white text-black font-black uppercase text-xs tracking-widest rounded-full hover:bg-[var(--accent-cyan)] transition-colors duration-500">
-                        Initialize
+                        Subscribe
                     </button>
                 </div>
             </form>
@@ -969,16 +1051,16 @@
                     class="text-[11px] font-black tracking-[0.1em] uppercase text-white/60 mb-10 block border-b border-white/5 pb-4">Navigation</span>
                 <ul class="space-y-6 text-[11px] font-bold uppercase tracking-normal text-white/80">
                     <li><a href="index.html#home"
-                            class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">Vision</a>
+                            class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">Home</a>
                     </li>
                     <li><a href="about.html"
                             class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">About</a>
                     </li>
                     <li><a href="archive.html"
-                            class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">Archive</a>
+                            class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">Product</a>
                     </li>
-                    <li><a href="index.html#categories"
-                            class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">Curation</a>
+                    <li><a href="contact.html"
+                            class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">Contact</a>
                     </li>
                 </ul>
             </div>
@@ -987,10 +1069,9 @@
                     class="text-[11px] font-black tracking-[0.1em] uppercase text-white/60 mb-10 block border-b border-white/5 pb-4">Digital
                     Presence</span>
                 <ul class="space-y-6 text-[11px] font-bold uppercase tracking-normal text-white/80">
+                    <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors italic">Facebook</a></li>
                     <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors italic">Instagram</a></li>
-                    <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors italic">X / Digital</a>
-                    </li>
-                    <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors italic">LinkedIn</a></li>
+                    <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors italic">TikTok</a></li>
                 </ul>
             </div>
             <div class="text-center lg:text-left">
@@ -1008,13 +1089,13 @@
                         class="flex items-center justify-center lg:justify-start gap-4 hover:text-[var(--accent-cyan)] transition-all cursor-pointer group">
                         <i
                             class="fas fa-envelope text-[var(--accent-cyan)] text-xs group-hover:scale-110 transition-transform"></i>
-                        <span>connect@theamaze.fashion</span>
+                        <span>officialtheamaze@gmail.com</span>
                     </li>
                     <li
                         class="flex items-center justify-center lg:justify-start gap-4 hover:text-[var(--accent-cyan)] transition-all cursor-pointer group">
                         <i
                             class="fas fa-map-marker-alt text-[var(--accent-cyan)] text-xs group-hover:scale-110 transition-transform"></i>
-                        <span>Tokyo / Paris / New York</span>
+                        <span>Pakistan / Karachi</span>
                     </li>
                 </ul>
             </div>
@@ -1085,6 +1166,33 @@
                     <p class="text-[9px] font-bold text-white/20 uppercase tracking-widest text-center">
                         These items are reserved in your local protocol.
                     </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Overlay -->
+    <div id="searchOverlay" class="fixed inset-0 z-[250] hidden">
+        <div class="absolute inset-0 bg-black/95 backdrop-blur-3xl transition-opacity duration-500"></div>
+        <div class="relative h-full flex flex-col items-center justify-center px-6">
+            <button id="closeSearch" class="absolute top-10 right-10 text-white/20 hover:text-white transition-colors">
+                <i class="fas fa-times text-2xl md:text-3xl"></i>
+            </button>
+            <div class="w-full max-w-4xl animate-reveal-up">
+                <span
+                    class="text-[10px] font-black tracking-[0.5em] uppercase text-[var(--accent-cyan)] mb-4 block text-center">Global
+                    Search Protocol</span>
+                <div class="relative group">
+                    <input type="text" id="searchInput" placeholder="Search the Archive..."
+                        class="w-full bg-transparent border-b-2 border-white/10 py-6 md:py-8 text-3xl md:text-7xl font-black uppercase tracking-tighter text-white placeholder-white/5 outline-none focus:border-[var(--accent-cyan)] transition-colors">
+                    <div
+                        class="absolute right-0 bottom-4 text-white/20 group-focus-within:text-[var(--accent-cyan)] transition-colors">
+                        <i class="fas fa-search text-2xl md:text-5xl"></i>
+                    </div>
+                </div>
+                <div id="searchResults"
+                    class="mt-12 md:mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-h-[40vh] md:max-h-[50vh] overflow-y-auto custom-scrollbar pr-4">
+                    <!-- Search results will appear here -->
                 </div>
             </div>
         </div>

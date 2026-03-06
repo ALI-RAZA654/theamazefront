@@ -1,5 +1,5 @@
 // THE AMAZE - Frontend API Client
-const API_BASE_URL = 'http://127.0.0.1:5000/api';
+const API_BASE_URL = 'https://theamazebackend-production.up.railway.app/api';
 
 window.API = {
     async request(endpoint, options = {}) {
@@ -16,7 +16,10 @@ window.API = {
         };
 
         try {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+            const timestamp = new Date().getTime();
+            const separator = endpoint.includes('?') ? '&' : '?';
+            const url = `${API_BASE_URL}${endpoint}${separator}t=${timestamp}`;
+            const response = await fetch(url, config);
             const data = await response.json();
 
             if (!response.ok) {

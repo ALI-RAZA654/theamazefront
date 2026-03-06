@@ -5,8 +5,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="THE AMAZE Archive 2026 - Access the full inventory of digital sculptures and technical garments.">
-    <title>Archive | THE AMAZE Fashion Showroom</title>
+        content="THE AMAZE Archive 2026 - Access the full inventory of digital sculptures and technical garments. Premium clothing for the elite.">
+    <meta name="keywords"
+        content="Clothing Archive, Premium Fashion, Designer Cloth, Technical Apparel, THE AMAZE Collection">
+    <link rel="canonical" href="https://theamaze.com/archive.html">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Archive | THE AMAZE Fashion Master Catalog">
+    <meta property="og:description"
+        content="Explore the full 2026 collection of technical garments and digital sculptures.">
+    <meta property="og:url" content="https://theamaze.com/archive.html">
+    <meta property="og:type" content="website">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://theamaze.com/"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Archive",
+        "item": "https://theamaze.com/archive.html"
+      }]
+    }
+    </script>
+
+    <title>Archive | THE AMAZE Premium Clothing Catalog</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -191,7 +220,7 @@
         .menu-link {
             position: relative;
             display: inline-block;
-            overflow: hidden;
+            padding-bottom: 5px;
         }
 
         .menu-link::after {
@@ -320,8 +349,8 @@
                         <div class="w-7 md:w-8 h-[1px] bg-white group-hover:w-6 transition-all"></div>
                     </div>
                     <span
-                        class="text-[9px] md:text-[10px] font-black tracking-[0.4em] uppercase hidden sm:block">Protocol
-                        Menu</span>
+                        class="text-[9px] md:text-[10px] font-black tracking-[0.4em] uppercase hidden sm:block">Archive
+                        Inventory</span>
                 </button>
             </div>
             <div class="flex items-center">
@@ -334,6 +363,13 @@
                 </a>
             </div>
             <div class="flex items-center gap-3 md:gap-6">
+                <!-- Search Trigger -->
+                <button id="searchBtn" class="flex items-center gap-2 opacity-70 hover:opacity-100 transition-all group"
+                    title="Search Protocol">
+                    <i
+                        class="fas fa-search text-white group-hover:text-[var(--accent-cyan)] transition-colors text-sm md:text-base"></i>
+                </button>
+
                 <!-- Favorites Trigger -->
                 <button id="favBtn" class="flex items-center gap-2 opacity-70 hover:opacity-100 transition-all group">
                     <i
@@ -364,35 +400,58 @@
             class="absolute inset-0 bg-black/95 backdrop-blur-3xl opacity-0 transition-opacity duration-500 pointer-events-none">
         </div>
         <div
-            class="absolute left-0 top-0 h-full w-full max-w-xl bg-[#050505] border-r border-white/5 p-16 flex flex-col pointer-events-auto">
-            <div class="flex justify-between items-center mb-24">
-                <span class="text-[10px] font-black tracking-[0.5em] uppercase text-white/20">Navigation Protocol</span>
+            class="absolute left-0 top-0 h-full w-full max-w-[900px] bg-[#050505] border-r border-white/5 p-8 md:p-16 flex flex-col pointer-events-auto">
+            <div class="flex justify-between items-center mb-16 md:mb-24">
+                <span class="text-[10px] font-black tracking-[0.5em] uppercase text-white/20">Menu Interface</span>
                 <button id="closeMenu" class="text-white/20 hover:text-white transition-colors">
                     <i class="fas fa-times text-2xl"></i>
                 </button>
             </div>
 
-            <ul class="flex-1 space-y-8 md:space-y-12">
-                <li>
-                    <a href="index.html#home"
-                        class="menu-link text-4xl md:text-6xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase">Vision.</a>
-                </li>
-                <li>
-                    <a href="about.html"
-                        class="menu-link text-4xl md:text-6xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase">About.</a>
-                </li>
-                <li>
-                    <a href="archive.html"
-                        class="menu-link text-4xl md:text-6xl font-black tracking-tighter text-[var(--accent-cyan)] uppercase">Archive.</a>
-                </li>
-                <li>
-                    <a href="contact.html"
-                        class="menu-link text-4xl md:text-6xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase">Contact.</a>
-                </li>
-            </ul>
+            <div
+                class="flex flex-1 flex-col md:flex-row items-start gap-8 md:gap-20 overflow-y-auto overflow-x-hidden md:overflow-hidden w-full custom-scrollbar pb-10">
+                <div class="w-full xl:w-1/2 flex-shrink-0">
+                    <span
+                        class="text-[9px] font-black tracking-[0.5em] uppercase text-white/20 mb-8 block md:hidden">Navigation
+                        Section</span>
+                    <ul class="space-y-4 md:space-y-10">
+                        <li>
+                            <a href="index.html#home"
+                                class="menu-link text-2xl md:text-5xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase leading-tight">Home.</a>
+                        </li>
+                        <li>
+                            <a href="about.html"
+                                class="menu-link text-2xl md:text-5xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase leading-tight">About.</a>
+                        </li>
+                        <li>
+                            <a href="archive.html"
+                                class="menu-link text-2xl md:text-5xl font-black tracking-tighter text-[var(--accent-cyan)] uppercase leading-tight">Product.</a>
+                        </li>
+                        <li>
+                            <a href="contact.html"
+                                class="menu-link text-2xl md:text-5xl font-black tracking-tighter text-white hover:text-[var(--accent-cyan)] transition-colors uppercase leading-tight">Contact.</a>
+                        </li>
+                    </ul>
+                </div>
 
-            <div class="mt-20 pt-12 border-t border-white/5">
-                <p class="text-[9px] font-black uppercase tracking-[0.4em] text-white/20">The Amaze Architecture v.2026
+                <!-- Divider (Desktop) -->
+                <div class="hidden md:block w-px h-[60%] bg-white/5 self-center min-h-[300px]"></div>
+
+                <!-- Right: Categories / Curation -->
+                <div class="w-full md:w-80 flex flex-col mb-10 md:mb-0">
+                    <span
+                        class="text-[10px] font-black tracking-[0.5em] uppercase text-white/20 mb-4 md:mb-8 block mt-4 md:mt-0 flex-shrink-0 border-t border-white/5 pt-8 md:border-none md:pt-0">Categories
+                        Curation</span>
+                    <div class="w-full md:flex-1 md:overflow-y-auto md:custom-scrollbar md:pr-4">
+                        <ul id="menuCategories" class="space-y-4 md:space-y-5">
+                            <!-- Categories are dynamically injected here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 pt-12 border-t border-white/5">
+                <p class="text-[9px] font-black uppercase tracking-[0.4em] text-white/20">The Amaze Collection v.2026
                 </p>
             </div>
         </div>
@@ -401,10 +460,11 @@
     <main class="pt-32 md:pt-40 pb-20 px-6">
         <div class="max-w-[1700px] mx-auto">
             <div class="mb-16 md:mb-32 animate-reveal-up text-center md:text-left">
-                <span class="section-label md:mx-0 mx-auto">Master Catalog</span>
+                <span class="section-label md:mx-0 mx-auto">Latest Collection</span>
                 <h1 class="text-6xl md:text-9xl font-black tracking-tighter text-white mb-6 uppercase">ALL PIECES<span
                         class="text-[var(--accent-cyan)]">.</span></h1>
-                <p class="text-white/40 font-light tracking-widest text-[10px] md:text-xs uppercase">Deployment Protocol
+                <p class="text-white/40 font-light tracking-widest text-[10px] md:text-xs uppercase">The Amaze
+                    Collection
                     v.2026 /
                     Global Inventory Access</p>
             </div>
@@ -456,16 +516,16 @@
                     class="text-[11px] font-black tracking-[0.1em] uppercase text-white/60 mb-10 block border-b border-white/5 pb-4">Navigation</span>
                 <ul class="space-y-6 text-[11px] font-bold uppercase tracking-normal text-white/80">
                     <li><a href="index.html#home"
-                            class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">Vision</a>
+                            class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">Home</a>
                     </li>
                     <li><a href="about.html"
                             class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">About</a>
                     </li>
                     <li><a href="archive.html"
-                            class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">Archive</a>
+                            class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">Product</a>
                     </li>
-                    <li><a href="index.html#categories"
-                            class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">Curation</a>
+                    <li><a href="contact.html"
+                            class="hover:text-[var(--accent-cyan)] hover:translate-x-1 transition-all inline-block">Contact</a>
                     </li>
                 </ul>
             </div>
@@ -474,10 +534,9 @@
                     class="text-[11px] font-black tracking-[0.1em] uppercase text-white/60 mb-10 block border-b border-white/5 pb-4">Digital
                     Presence</span>
                 <ul class="space-y-6 text-[11px] font-bold uppercase tracking-normal text-white/80">
+                    <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors italic">Facebook</a></li>
                     <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors italic">Instagram</a></li>
-                    <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors italic">X / Digital</a>
-                    </li>
-                    <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors italic">LinkedIn</a></li>
+                    <li><a href="#" class="hover:text-[var(--accent-cyan)] transition-colors italic">TikTok</a></li>
                 </ul>
             </div>
             <div class="text-center lg:text-left">
@@ -495,13 +554,13 @@
                         class="flex items-center justify-center lg:justify-start gap-4 hover:text-[var(--accent-cyan)] transition-all cursor-pointer group">
                         <i
                             class="fas fa-envelope text-[var(--accent-cyan)] text-xs group-hover:scale-110 transition-transform"></i>
-                        <span>connect@theamaze.fashion</span>
+                        <span>officialtheamaze@gmail.com</span>
                     </li>
                     <li
                         class="flex items-center justify-center lg:justify-start gap-4 hover:text-[var(--accent-cyan)] transition-all cursor-pointer group">
                         <i
                             class="fas fa-map-marker-alt text-[var(--accent-cyan)] text-xs group-hover:scale-110 transition-transform"></i>
-                        <span>Tokyo / Paris / New York</span>
+                        <span>Pakistan / Karachi</span>
                     </li>
                 </ul>
             </div>
@@ -568,6 +627,33 @@
                         class="w-full py-6 md:py-10 bg-[var(--accent-cyan)] text-black font-black uppercase tracking-widest text-[10px] md:text-xs rounded-full hover:bg-[var(--accent-teal)] transition-colors duration-500">
                         Complete Transaction
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Overlay -->
+    <div id="searchOverlay" class="fixed inset-0 z-[250] hidden">
+        <div class="absolute inset-0 bg-black/95 backdrop-blur-3xl transition-opacity duration-500"></div>
+        <div class="relative h-full flex flex-col items-center justify-center px-6">
+            <button id="closeSearch" class="absolute top-10 right-10 text-white/20 hover:text-white transition-colors">
+                <i class="fas fa-times text-2xl md:text-3xl"></i>
+            </button>
+            <div class="w-full max-w-4xl animate-reveal-up">
+                <span
+                    class="text-[10px] font-black tracking-[0.5em] uppercase text-[var(--accent-cyan)] mb-4 block text-center">Global
+                    Search Protocol</span>
+                <div class="relative group">
+                    <input type="text" id="searchInput" placeholder="Search the Archive..."
+                        class="w-full bg-transparent border-b-2 border-white/10 py-6 md:py-8 text-3xl md:text-7xl font-black uppercase tracking-tighter text-white placeholder-white/5 outline-none focus:border-[var(--accent-cyan)] transition-colors">
+                    <div
+                        class="absolute right-0 bottom-4 text-white/20 group-focus-within:text-[var(--accent-cyan)] transition-colors">
+                        <i class="fas fa-search text-2xl md:text-5xl"></i>
+                    </div>
+                </div>
+                <div id="searchResults"
+                    class="mt-12 md:mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-h-[40vh] md:max-h-[50vh] overflow-y-auto custom-scrollbar pr-4">
+                    <!-- Search results will appear here -->
                 </div>
             </div>
         </div>
