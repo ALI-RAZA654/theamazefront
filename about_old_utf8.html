@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 
 <head>
@@ -279,12 +279,12 @@
         <div class="animate-marquee">
             <div class="promo-item">Free Global Delivery on orders above <span class="promo-highlight">Rs. 5,999</span>
             </div>
-            <div class="promo-item">Exclusive 20% OFF â€” Use Code: <span class="promo-highlight">AMAZE20</span></div>
+            <div class="promo-item">Exclusive 20% OFF ├óΓé¼ΓÇ¥ Use Code: <span class="promo-highlight">AMAZE20</span></div>
             <div class="promo-item">Elite Protocol: <span class="promo-highlight">Limited Stock Available</span></div>
             <!-- Duplicate for seamless loop -->
             <div class="promo-item">Free Global Delivery on orders above <span class="promo-highlight">Rs. 5,999</span>
             </div>
-            <div class="promo-item">Exclusive 20% OFF â€” Use Code: <span class="promo-highlight">AMAZE20</span></div>
+            <div class="promo-item">Exclusive 20% OFF ├óΓé¼ΓÇ¥ Use Code: <span class="promo-highlight">AMAZE20</span></div>
             <div class="promo-item">Elite Protocol: <span class="promo-highlight">Limited Stock Available</span></div>
         </div>
     </div>
@@ -632,7 +632,7 @@
                             Trusted by <span class="text-[var(--accent-cyan)] font-playfair italic">operators</span>.
                         </h3>
                         <p class="text-base md:text-lg text-white/40 mt-6 max-w-3xl leading-relaxed mx-auto md:mx-0">
-                            Social proof matters on clothing sites. Here’s what customers usually care about: fabric
+                            Social proof matters on clothing sites. HereΓÇÖs what customers usually care about: fabric
                             feel, fit accuracy, and delivery experience.
                         </p>
                     </div>
@@ -643,9 +643,9 @@
                                 <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
                                     class="fas fa-star"></i><i class="fas fa-star-half-stroke opacity-60"></i>
                             </div>
-                            <p class="text-white/50 text-sm leading-relaxed">“Fabric feels premium and the silhouette is
-                                clean. The details look even better in-person.”</p>
-                            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 mt-6">Karachi •
+                            <p class="text-white/50 text-sm leading-relaxed">ΓÇ£Fabric feels premium and the silhouette is
+                                clean. The details look even better in-person.ΓÇ¥</p>
+                            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 mt-6">Karachi ΓÇó
                                 Verified</p>
                         </div>
                         <div class="glass-panel rounded-3xl p-8 border border-white/10">
@@ -653,9 +653,9 @@
                                 <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
                                     class="fas fa-star"></i><i class="fas fa-star"></i>
                             </div>
-                            <p class="text-white/50 text-sm leading-relaxed">“Size chart helped a lot. Delivery was
-                                smooth and packaging looked high-end.”</p>
-                            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 mt-6">Lahore •
+                            <p class="text-white/50 text-sm leading-relaxed">ΓÇ£Size chart helped a lot. Delivery was
+                                smooth and packaging looked high-end.ΓÇ¥</p>
+                            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 mt-6">Lahore ΓÇó
                                 Verified</p>
                         </div>
                         <div class="glass-panel rounded-3xl p-8 border border-white/10">
@@ -663,9 +663,9 @@
                                 <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
                                     class="fas fa-star"></i><i class="fas fa-star-half-stroke opacity-60"></i>
                             </div>
-                            <p class="text-white/50 text-sm leading-relaxed">“Looks like a luxury brand site. The
-                                product pages feel professional and trustworthy.”</p>
-                            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 mt-6">Islamabad •
+                            <p class="text-white/50 text-sm leading-relaxed">ΓÇ£Looks like a luxury brand site. The
+                                product pages feel professional and trustworthy.ΓÇ¥</p>
+                            <p class="text-[10px] font-black uppercase tracking-[0.5em] text-white/30 mt-6">Islamabad ΓÇó
                                 Verified</p>
                         </div>
                     </div>
@@ -702,7 +702,7 @@
                                 <i class="fas fa-plus text-white/40 group-open:rotate-45 transition-transform"></i>
                             </summary>
                             <p class="text-sm text-white/40 leading-relaxed mt-4">
-                                Delivery depends on your city. Once secured, dispatch protocol begins and you’ll receive
+                                Delivery depends on your city. Once secured, dispatch protocol begins and youΓÇÖll receive
                                 status updates via your local checkout flow.
                             </p>
                         </details>
@@ -713,7 +713,7 @@
                                 <i class="fas fa-plus text-white/40 group-open:rotate-45 transition-transform"></i>
                             </summary>
                             <p class="text-sm text-white/40 leading-relaxed mt-4">
-                                Yes—fit issues are handled via a simple exchange protocol. Keep the item in clean
+                                YesΓÇöfit issues are handled via a simple exchange protocol. Keep the item in clean
                                 condition and request support.
                             </p>
                         </details>
@@ -906,8 +906,14 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                if (!window.API) return;
-                const data = await API.get('/about');
+                // Determine API Base URL
+                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                const API_BASE = isLocal ? 'http://localhost:5000/api' : 'https://the-amaze-backend.onrender.com/api';
+
+                const response = await fetch(`${API_BASE}/about`);
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.json();
                 if (!data) return;
 
                 const updateDOM = (id, property) => {
