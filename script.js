@@ -1055,7 +1055,7 @@ const AMAZE = {
 
                 <div class="flex items-end gap-6 mb-12">
                     <span class="text-4xl font-bold text-[var(--accent-cyan)]">RS.${product.isFlashSale ? product.salePrice : product.price}</span>
-                    <span class="text-xl text-white/20 line-through decoration-white/20 mb-1">RS.${product.isFlashSale ? product.price : (product.original || 0)}</span>
+                    ${(product.isFlashSale && product.price) ? `<span class="text-xl text-white/20 line-through decoration-white/20 mb-1">RS.${product.price}</span>` : (product.original && product.original > 0 && product.original !== product.price ? `<span class="text-xl text-white/20 line-through decoration-white/20 mb-1">RS.${product.original}</span>` : '')}
                 </div>
 
                 <div class="prose prose-invert mb-12">
@@ -1674,8 +1674,8 @@ const AMAZE = {
                                         <h4 class="text-sm font-black text-white uppercase group-hover:text-[var(--accent-cyan)] transition-colors">${r.name}</h4>
                                     </div>
                                     <div class="text-right">
-                                        <span class="block text-lg font-bold text-[var(--accent-cyan)]">RS.${r.price}</span>
-                                        <span class="block text-[10px] text-white/25 line-through">RS.${r.original}</span>
+                                        <span class="block text-lg font-bold text-[var(--accent-cyan)]">RS.${r.isFlashSale ? r.salePrice : r.price}</span>
+                                        ${r.isFlashSale ? `<span class="block text-[10px] text-white/25 line-through">RS.${r.price}</span>` : (r.original && r.original > 0 && r.original !== r.price ? `<span class="block text-[10px] text-white/25 line-through">RS.${r.original}</span>` : '')}
                                     </div>
                                 </div>
                                 <div class="flex items-center justify-between text-[9px] text-white/40 mb-4">
