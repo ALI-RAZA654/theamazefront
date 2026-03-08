@@ -1880,12 +1880,27 @@ const AMAZE = {
      */
     buyNow(input, quantity = 1, customPrice = null, isSale = false) {
         let items = [];
-        if (Array.isArray(input)) {
+        const isFromCart = Array.isArray(input);
+
+        if (isFromCart) {
             items = input.map(item => ({
-                product: item,
+                product: item.product || item, // Fallback if `grouped` was direct product ref
                 quantity: item.quantity || 1,
-                price: item.salePrice || item.price
+                price: item.salePrice || item.price || (item.product ? (item.product.salePrice || item.product.price) : 0)
             }));
+
+            // To ensure prices sum up correctly when coming from cart:
+            // The items variable passed from cartBuyNow comes as grouped[item.id] = { ...item, quantity: N } 
+            items = items.map(i => {
+                // If the object flat-out is the product + quantity
+                if (i.product && i.product.id) {
+                    return i;
+                } else if (i.id) {
+                    return { product: i, quantity: i.quantity, price: i.salePrice || i.price };
+                }
+                return i;
+            });
+
         } else {
             let product = this.state.products.find(p => p.id === input);
             if (product) {
@@ -1901,7 +1916,7 @@ const AMAZE = {
         }
 
         if (items.length > 0) {
-            this.renderCheckoutModal(items);
+            this.renderCheckoutModal(items, isFromCart);
         }
     },
 
@@ -2046,7 +2061,7 @@ const AMAZE = {
         }
     },
 
-    renderCheckoutModal(items) {
+    renderCheckoutModal(items, isFromCart = false) {
         this.state.lastCheckoutItems = items;
         const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
         const shipping = subtotal >= 5000 ? 0 : 250;
@@ -2090,10 +2105,11 @@ const AMAZE = {
                                 </div>
                             </div>
 
-                            <div id="checkoutSpecsContainer" class="space-y-6">
+                            <div id="checkoutSpecsContainer" class="space-y-6 ${!isFromCart && (window.location.pathname.toLowerCase().includes('product') || window.location.search.includes('id=')) ? 'hidden' : ''}">
                                 ${items.map(item => {
             const p = item.product;
-            if ((!p.sizes || p.sizes.length === 0) && (!p.variants || p.variants.length === 0)) return '';
+            const colorsArray = p.colors || p.variants;
+            if ((!p.sizes || p.sizes.length === 0) && (!colorsArray || colorsArray.length === 0)) return '';
             return `
                                     <div class="p-6 bg-white/5 border border-white/10 rounded-2xl space-y-4">
                                         <p class="text-[10px] font-black uppercase text-white/30 tracking-widest">${p.name} Specs</p>
@@ -2107,13 +2123,17 @@ const AMAZE = {
             }).join('')}
                                             </div>
                                         </div>` : ''}
-                                        ${p.variants?.length > 0 ? `
+                                        ${colorsArray?.length > 0 ? `
                                         <div>
                                             <span class="block text-[9px] font-bold text-white/20 uppercase mb-2">Pigment</span>
                                             <div class="flex flex-wrap gap-3">
-                                                ${p.variants.map((v, i) => {
-                const sel = this.state.selectedColors[p.id] === v.colorName;
-                return `<button type="button" onclick="AMAZE.selectColor('${p.id}', '${v.colorName}', '${v.image}', this)" class="w-8 h-8 rounded-full"><div class="w-full h-full rounded-full border border-white/20 transition-all ${sel ? 'ring-2 ring-[var(--accent-cyan)] ring-offset-2 ring-offset-black scale-110' : ''}" style="background-color: ${v.colorHex || '#000'}"></div></button>`;
+                                                ${colorsArray.map((v, i) => {
+                const isObj = typeof v === 'object';
+                const hex = isObj ? (v.colorHex || v.hex) : v;
+                const name = isObj ? (v.colorName || v.name) : `Pigment ${i + 1}`;
+                const img = isObj ? (v.image || p.image) : p.image;
+                const sel = this.state.selectedColors[p.id] === name;
+                return `<button type="button" onclick="AMAZE.selectColor('${p.id}', '${name}', '${img}', this)" class="w-8 h-8 rounded-full" title="${name}"><div class="w-full h-full rounded-full border border-white/20 transition-all ${sel ? 'ring-2 ring-[var(--accent-cyan)] ring-offset-2 ring-offset-black scale-110' : ''}" style="background-color: ${hex || '#000'}"></div></button>`;
             }).join('')}
                                             </div>
                                         </div>` : ''}
