@@ -882,7 +882,7 @@ const AMAZE = {
     renderProducts() {
         if (!this.dom.productGrid) return;
         const filtered = this.state.filter === 'all'
-            ? this.state.products.slice(0, 8)
+            ? this.state.products
             : this.state.products.filter(p => p.category === this.state.filter);
 
         this.dom.productGrid.innerHTML = filtered.map(p => this.createProductCard(p)).join('');
@@ -1054,8 +1054,8 @@ const AMAZE = {
                 <p class="text-[10px] font-bold uppercase tracking-widest text-white/50 mb-4">Fabric: ${product.fabric || 'Hybrid Synthetic'}</p>
 
                 <div class="flex items-end gap-6 mb-12">
-                    <span class="text-4xl font-bold text-[var(--accent-cyan)]">RS.${product.isFlashSale ? product.salePrice : product.price}</span>
-                    ${(product.isFlashSale && product.price) ? `<span class="text-xl text-white/20 line-through decoration-white/20 mb-1">RS.${product.price}</span>` : (product.original && product.original > 0 && product.original !== product.price ? `<span class="text-xl text-white/20 line-through decoration-white/20 mb-1">RS.${product.original}</span>` : '')}
+                    <span class="text-4xl font-bold text-[var(--accent-cyan)]">RS.${(product.salePrice && product.salePrice > 0) ? product.salePrice : product.price}</span>
+                    ${(product.salePrice && product.salePrice > 0) ? `<span class="text-xl text-white/20 line-through decoration-white/20 mb-1">RS.${product.price}</span>` : (product.original && product.original > 0 && product.original !== product.price ? `<span class="text-xl text-white/20 line-through decoration-white/20 mb-1">RS.${product.original}</span>` : '')}
                 </div>
 
                 <div class="prose prose-invert mb-12">
@@ -1342,8 +1342,8 @@ const AMAZE = {
                         </div>
                     </div>
                     <div class="text-right">
-                        <span class="block text-xl font-bold text-[var(--accent-cyan)]">RS.${(p.isFlashSale ? p.salePrice : p.price) || 0}</span>
-                        ${p.isFlashSale ? `<span class="block text-xs text-white/20 line-through tracking-tighter">RS.${p.price || 0}</span>` : (p.original && p.original !== p.price ? `<span class="block text-[10px] text-white/20 line-through tracking-tighter">RS.${p.original}</span>` : '')}
+                        <span class="block text-xl font-bold text-[var(--accent-cyan)]">RS.${(p.salePrice && p.salePrice > 0) ? p.salePrice : p.price}</span>
+                        ${(p.salePrice && p.salePrice > 0) ? `<span class="block text-xs text-white/20 line-through tracking-tighter">RS.${p.price}</span>` : (p.original && p.original > 0 && p.original !== p.price ? `<span class="block text-[10px] text-white/20 line-through tracking-tighter">RS.${p.original}</span>` : '')}
                     </div>
                 </div>
         </div>
@@ -1674,8 +1674,8 @@ const AMAZE = {
                                         <h4 class="text-sm font-black text-white uppercase group-hover:text-[var(--accent-cyan)] transition-colors">${r.name}</h4>
                                     </div>
                                     <div class="text-right">
-                                        <span class="block text-lg font-bold text-[var(--accent-cyan)]">RS.${r.isFlashSale ? r.salePrice : r.price}</span>
-                                        ${r.isFlashSale ? `<span class="block text-[10px] text-white/25 line-through">RS.${r.price}</span>` : (r.original && r.original > 0 && r.original !== r.price ? `<span class="block text-[10px] text-white/25 line-through">RS.${r.original}</span>` : '')}
+                                        <span class="block text-lg font-bold text-[var(--accent-cyan)]">RS.${(r.salePrice && r.salePrice > 0) ? r.salePrice : r.price}</span>
+                                        ${(r.salePrice && r.salePrice > 0) ? `<span class="block text-[10px] text-white/25 line-through">RS.${r.price}</span>` : (r.original && r.original > 0 && r.original !== r.price ? `<span class="block text-[10px] text-white/25 line-through">RS.${r.original}</span>` : '')}
                                     </div>
                                 </div>
                                 <div class="flex items-center justify-between text-[9px] text-white/40 mb-4">
