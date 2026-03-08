@@ -882,7 +882,7 @@ const AMAZE = {
     renderProducts() {
         if (!this.dom.productGrid) return;
         const filtered = this.state.filter === 'all'
-            ? this.state.products
+            ? this.state.products.slice(0, 8)
             : this.state.products.filter(p => p.category === this.state.filter);
 
         this.dom.productGrid.innerHTML = filtered.map(p => this.createProductCard(p)).join('');
