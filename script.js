@@ -19,6 +19,16 @@ const AMAZE = {
         cart: JSON.parse(localStorage.getItem('the_amaze_cart_2026')) || [],
         favorites: JSON.parse(localStorage.getItem('the_amaze_favorites_2026')) || [],
         reviews: JSON.parse(localStorage.getItem(ADMIN_KEYS.REVIEWS)) || [],
+        payments: {
+            easyPaisa: '',
+            easyPaisaTitle: '',
+            easyPaisaActive: true,
+            jazzCash: '',
+            jazzCashTitle: '',
+            jazzCashActive: true,
+            shippingFee: 250,
+            enableCOD: true
+        },
         selectedSizes: {},
         selectedColors: {},
         products: JSON.parse(localStorage.getItem(ADMIN_KEYS.PRODUCTS)) || [
@@ -330,7 +340,10 @@ const AMAZE = {
             museData,
             contactSubjects,
             trust,
-            reviewsData
+            contactSubjects,
+            trust,
+            reviewsData,
+            paymentSettings
         ] = await Promise.all([
             fetchSafe('/products'),
             fetchSafe('/hero'),
@@ -342,7 +355,8 @@ const AMAZE = {
             fetchSafe('/muse'),
             fetchSafe('/contact/subjects'),
             fetchSafe('/trust'),
-            fetchSafe('/reviews')
+            fetchSafe('/reviews'),
+            fetchSafe('/payment')
         ]);
 
         // Map backend product structure to frontend structure with safety guard
@@ -388,6 +402,10 @@ const AMAZE = {
         if (reviewsData) {
             this.state.reviews = reviewsData.reviews?.filter(r => r.approved) || [];
             this.state.reviewSettings = reviewsData.settings || {};
+        }
+
+        if (paymentSettings) {
+            this.state.payments = paymentSettings;
         }
 
         // Update pulse messages from muse data
@@ -2026,41 +2044,6 @@ const AMAZE = {
         setTimeout(() => modal.classList.add('hidden'), 300);
     },
 
-    selectPayment(method) {
-        const box = document.getElementById('paymentOptionsBox');
-        const detailsEl = document.getElementById('paymentAccountDetails');
-        const contentEl = document.getElementById('paymentAccountContent');
-        if (!box || !detailsEl || !contentEl) return;
-
-        box.querySelectorAll('.payment-label').forEach(l => {
-            const isSelected = l.getAttribute('data-payment') === method;
-            l.classList.remove('border-[var(--accent-cyan)]', 'bg-[var(--accent-cyan)]/5', 'opacity-100', 'border-white/10', 'bg-white/5', 'opacity-50');
-            l.classList.add(isSelected ? 'border-[var(--accent-cyan)]' : 'border-white/10', isSelected ? 'bg-[var(--accent-cyan)]/5' : 'bg-white/5', isSelected ? 'opacity-100' : 'opacity-50');
-            const innerDot = l.querySelector('div div');
-            if (innerDot) {
-                if (isSelected) {
-                    innerDot.style.backgroundColor = 'var(--accent-cyan)';
-                    innerDot.parentElement.style.borderColor = 'var(--accent-cyan)';
-                } else {
-                    innerDot.style.backgroundColor = 'transparent';
-                    innerDot.parentElement.style.borderColor = 'rgba(255,255,255,0.2)';
-                }
-            }
-        });
-
-        const paymentInput = document.getElementById('checkoutPaymentMethod');
-        if (paymentInput) paymentInput.value = method;
-        if (method === 'cod') {
-            detailsEl.classList.add('hidden');
-            return;
-        }
-        detailsEl.classList.remove('hidden');
-        if (method === 'easypaisa') {
-            contentEl.innerHTML = '<p><span class="text-white/50">Account Title:</span> THE AMAZE</p><p><span class="text-white/50">EasyPaisa Number:</span> 03XX-XXXXXXX</p><p class="text-[10px] text-white/40 mt-2">(Apna number yahan update karen)</p>';
-        } else if (method === 'jazzcash') {
-            contentEl.innerHTML = '<p><span class="text-white/50">Account Title:</span> THE AMAZE</p><p><span class="text-white/50">JazzCash Number:</span> 03XX-XXXXXXX</p><p class="text-[10px] text-white/40 mt-2">(Apna number yahan update karen)</p>';
-        }
-    },
 
     renderCheckoutModal(items, isFromCart = false) {
         this.state.lastCheckoutItems = items;
