@@ -340,8 +340,6 @@ const AMAZE = {
             museData,
             contactSubjects,
             trust,
-            contactSubjects,
-            trust,
             reviewsData,
             paymentSettings
         ] = await Promise.all([
@@ -554,6 +552,9 @@ const AMAZE = {
                 // Helper to format content
                 const formatPromo = (text) => {
                     let content = text;
+                    // 0. Sanitize encoding glitches (e.g. UTF-8 vs Windows-1252)
+                    content = content.replace(/Â–|Â—|Â/g, '–');
+                    content = content.replace(/â€“|â€”/g, '–');
                     // 1. Highlight Price Patterns (Rs. 5,999)
                     content = content.replace(/(Rs\.\s*[\d,]+)/gi, '<span class="promo-highlight">$1</span>');
                     // 2. Highlight "SALE" (case-insensitive)
