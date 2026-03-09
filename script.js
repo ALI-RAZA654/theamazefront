@@ -553,7 +553,8 @@ const AMAZE = {
                 };
 
                 // Create items (double them for seamless loop)
-                const itemsHtml = [...promoTexts, ...promoTexts].map(text => `
+                const repeatedTexts = promoTexts.length < 5 ? [...promoTexts, ...promoTexts, ...promoTexts] : [...promoTexts, ...promoTexts];
+                const itemsHtml = repeatedTexts.map(text => `
                     <div class="promo-item">${formatPromo(text)}</div>
                 `).join('');
 
@@ -2161,17 +2162,22 @@ const AMAZE = {
                                         <div class="w-4 h-4 rounded-full border border-[var(--accent-cyan)] flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-[var(--accent-cyan)]"></div></div>
                                         <span class="text-[10px] md:text-sm font-black text-white uppercase tracking-widest">Cash on Delivery</span>
                                     </label>
-                                    <label data-payment="easypaisa" class="payment-label flex items-center gap-3 p-4 border border-white/10 bg-white/5 rounded-xl cursor-pointer opacity-50 hover:opacity-100 transition-all relative overflow-hidden group/pay" onclick="AMAZE.selectPayment('easypaisa')">
+                                    <label data-payment="easypaisa" class="payment-label flex items-center gap-3 p-4 border border-white/10 bg-white/5 rounded-xl cursor-pointer hover:opacity-100 transition-all relative overflow-hidden group/pay" onclick="AMAZE.selectPayment('easypaisa')">
                                         <div class="w-4 h-4 rounded-full border border-white/20 flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-transparent"></div></div>
                                         <span class="text-[10px] md:text-sm font-black text-white uppercase tracking-widest">EasyPaisa</span>
                                     </label>
-                                    <label data-payment="jazzcash" class="payment-label flex items-center gap-3 p-4 border border-white/10 bg-white/5 rounded-xl cursor-pointer opacity-50 hover:opacity-100 transition-all relative overflow-hidden group/pay" onclick="AMAZE.selectPayment('jazzcash')">
+                                    <label data-payment="jazzcash" class="payment-label flex items-center gap-3 p-4 border border-white/10 bg-white/5 rounded-xl cursor-pointer hover:opacity-100 transition-all relative overflow-hidden group/pay" onclick="AMAZE.selectPayment('jazzcash')">
                                         <div class="w-4 h-4 rounded-full border border-white/20 flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-transparent"></div></div>
                                         <span class="text-[10px] md:text-sm font-black text-white uppercase tracking-widest">JazzCash</span>
                                     </label>
                                 </div>
-                                <div id="paymentAccountDetails" class="hidden mt-4 p-4 bg-black/30 border border-[var(--accent-cyan)]/30 rounded-xl space-y-3">
-                                    <div id="paymentAccountContent" class="text-xs text-white/90 space-y-1"></div>
+                                <div id="paymentAccountDetails" class="hidden mt-4 p-5 bg-black/60 border border-[var(--accent-cyan)]/20 rounded-2xl space-y-4 animate-fade-in">
+                                    <div id="paymentAccountContent" class="space-y-3"></div>
+                                    <div class="pt-3 border-t border-white/5">
+                                        <p class="text-[10px] font-black text-red-500 uppercase tracking-widest leading-relaxed">
+                                            Important: Please send a screenshot of your payment receipt to our WhatsApp. Orders will only be dispatched after receipt verification.
+                                        </p>
+                                    </div>
                                 </div>
                                 <input type="hidden" id="checkoutPaymentMethod" value="cod">
                             </div>
@@ -2241,6 +2247,53 @@ const AMAZE = {
         this.dom.checkoutOverlay?.addEventListener('click', () => this.toggleCheckout(false));
 
         this.toggleCheckout(true);
+    },
+
+    selectPayment(method) {
+        const labels = document.querySelectorAll('.payment-label');
+        const box = document.getElementById('paymentAccountDetails');
+        const content = document.getElementById('paymentAccountContent');
+        const hiddenInput = document.getElementById('checkoutPaymentMethod');
+        const payments = this.state.payments;
+
+        if (hiddenInput) hiddenInput.value = method;
+
+        labels.forEach(l => {
+            const isSelected = l.getAttribute('data-payment') === method;
+            const dot = l.querySelector('div.w-2.h-2');
+            const outer = l.querySelector('div.w-4.h-4');
+
+            if (isSelected) {
+                l.classList.add('border-[var(--accent-cyan)]', 'bg-[var(--accent-cyan)]/5');
+                l.classList.remove('border-white/10', 'bg-white/5', 'opacity-50');
+                if (dot) dot.classList.replace('bg-transparent', 'bg-[var(--accent-cyan)]');
+                if (outer) outer.classList.replace('border-white/20', 'border-[var(--accent-cyan)]');
+            } else {
+                l.classList.remove('border-[var(--accent-cyan)]', 'bg-[var(--accent-cyan)]/5');
+                l.classList.add('border-white/10', 'bg-white/5', 'opacity-50');
+                if (dot) dot.classList.replace('bg-[var(--accent-cyan)]', 'bg-transparent');
+                if (outer) outer.classList.replace('border-[var(--accent-cyan)]', 'border-white/20');
+            }
+        });
+
+        if (method === 'cod') {
+            box?.classList.add('hidden');
+        } else {
+            box?.classList.remove('hidden');
+            const title = method === 'easypaisa' ? (payments.easyPaisaTitle || 'THE AMAZE') : (payments.jazzCashTitle || 'THE AMAZE');
+            const number = method === 'easypaisa' ? payments.easyPaisa : payments.jazzCash;
+
+            content.innerHTML = `
+                <div class="space-y-1">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-white/40">Account Title</p>
+                    <p class="text-xs font-black text-white uppercase">${title}</p>
+                </div>
+                <div class="space-y-1 mt-3">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-white/40">${method === 'easypaisa' ? 'EasyPaisa' : 'JazzCash'} Number</p>
+                    <p class="text-xs font-black text-[var(--accent-cyan)] tracking-wider">${number}</p>
+                </div>
+            `;
+        }
     },
 
     toggleCheckout(show) {
