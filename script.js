@@ -2162,14 +2162,16 @@ const AMAZE = {
                                         <div class="w-4 h-4 rounded-full border border-[var(--accent-cyan)] flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-[var(--accent-cyan)]"></div></div>
                                         <span class="text-[10px] md:text-sm font-black text-white uppercase tracking-widest">Cash on Delivery</span>
                                     </label>
+                                    ${this.state.payments.easyPaisaActive !== false ? `
                                     <label data-payment="easypaisa" class="payment-label flex items-center gap-3 p-4 border border-white/10 bg-white/5 rounded-xl cursor-pointer hover:opacity-100 transition-all relative overflow-hidden group/pay" onclick="AMAZE.selectPayment('easypaisa')">
                                         <div class="w-4 h-4 rounded-full border border-white/20 flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-transparent"></div></div>
                                         <span class="text-[10px] md:text-sm font-black text-white uppercase tracking-widest">EasyPaisa</span>
-                                    </label>
+                                    </label>` : ''}
+                                    ${this.state.payments.jazzCashActive !== false ? `
                                     <label data-payment="jazzcash" class="payment-label flex items-center gap-3 p-4 border border-white/10 bg-white/5 rounded-xl cursor-pointer hover:opacity-100 transition-all relative overflow-hidden group/pay" onclick="AMAZE.selectPayment('jazzcash')">
                                         <div class="w-4 h-4 rounded-full border border-white/20 flex items-center justify-center"><div class="w-2 h-2 rounded-full bg-transparent"></div></div>
                                         <span class="text-[10px] md:text-sm font-black text-white uppercase tracking-widest">JazzCash</span>
-                                    </label>
+                                    </label>` : ''}
                                 </div>
                                 <div id="paymentAccountDetails" class="hidden mt-4 p-5 bg-black/60 border border-[var(--accent-cyan)]/20 rounded-2xl space-y-4 animate-fade-in">
                                     <div id="paymentAccountContent" class="space-y-3"></div>
