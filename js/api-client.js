@@ -1,5 +1,5 @@
 // THE AMAZE - Frontend API Client
-const API_BASE_URL = 'https://theamazebackend-production.up.railway.app/api';
+const API_BASE_URL = 'https://theamaz-ebackend.vercel.app/api';
 
 window.API = {
     async request(endpoint, options = {}) {
